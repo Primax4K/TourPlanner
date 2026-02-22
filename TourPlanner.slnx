@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="tourplanner.client/tourplanner.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="TourPlanner.Server/TourPlanner.Server.csproj" />
+</Solution>
