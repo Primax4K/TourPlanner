@@ -1,0 +1,5 @@
+<div class="py-2 text-lg flex">
+    @if(tourService.selectedTour()!==null && tour().id === tourService.selectedTour()?.id){
+    }
+    <span (click)="tourService.selectTour(tour().id)" class="grow">{{tour().name}}</span>
+</div>
