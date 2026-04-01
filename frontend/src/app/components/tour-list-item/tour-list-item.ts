@@ -1,4 +1,4 @@
-import { Component, input, InputSignal } from '@angular/core';
+import { Component, computed, input, InputSignal } from '@angular/core';
 import { Tour } from '../../model/model';
 import { TourService } from '../../services/TourService';
 
@@ -11,4 +11,8 @@ import { TourService } from '../../services/TourService';
 export class TourListItem {
   constructor(public tourService: TourService) {}
   tour = input.required<Tour>()
+  isSelected = computed(() => {
+    const selected = this.tourService.selectedTour();
+    return selected !== null && selected.id === this.tour().id;
+  });
 }
