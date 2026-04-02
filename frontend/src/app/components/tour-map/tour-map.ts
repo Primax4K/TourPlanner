@@ -2,7 +2,7 @@ import { AfterViewInit, Component, effect } from '@angular/core';
 import { TourService } from '../../services/TourService';
 
 import * as L from 'leaflet';
-import { Tour } from '../../model/model';
+import { RouteData, Tour } from '../../model/model';
 
 @Component({
   selector: 'app-tour-map',
@@ -15,6 +15,8 @@ export class TourMap implements AfterViewInit{
   private map!: L.Map;
   private from!:L.Marker;
   private to!:L.Marker;
+  private route!:L.Polyline;
+
   private start = L.icon({
     iconUrl: 'start.png',
     iconSize: [25, 25],
@@ -35,6 +37,7 @@ export class TourMap implements AfterViewInit{
         this.mapPosition(selected.from_lat, selected.from_long)
         this.setFrom(selected.from_lat, selected.from_long)
         this.setTo(selected.to_lat, selected.to_long)
+        this.drawRoute(selected.routeInfo)
       }
     })
   }
@@ -56,6 +59,17 @@ export class TourMap implements AfterViewInit{
       animate: true,
       duration: 1.5
     });
+  }
+  private drawRoute(routeInfo:RouteData|null){
+    if (this.route) {
+      this.map.removeLayer(this.route);
+    }
+    if(routeInfo){
+    this.route = L.polyline(routeInfo.coordinates, {
+      color: 'red',
+      weight: 8
+    }).addTo(this.map);
+    }
   }
   private setFrom(lat:number, long:number){
     if(this.from){
