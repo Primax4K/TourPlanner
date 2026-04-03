@@ -52,3 +52,138 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+
+
+# ------------------------------
+# Build results
+# ------------------------------
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+TestResults/
+*.Build.csproj.FileListAbsolute.txt
+
+# ------------------------------
+# Visual Studio
+# ------------------------------
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.opendb
+
+# Visual Studio cache/options
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+.vscode/*.code-snippets
+
+# ------------------------------
+# Rider / JetBrains
+# ------------------------------
+.idea/
+*.sln.iml
+*.DotSettings.user
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings
+
+# Rider caches
+.idea_modules/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+
+# ------------------------------
+# VS Code
+# ------------------------------
+.vscode/*
+!.vscode/extensions.json
+
+# ------------------------------
+# .NET / C#
+# ------------------------------
+project.lock.json
+project.fragment.lock.json
+artifacts/
+*.nuget.props
+*.nuget.targets
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+*.nuget.cache
+
+# ------------------------------
+# ASP.NET
+# ------------------------------
+wwwroot/lib/
+node_modules/
+
+# ------------------------------
+# Logs
+# ------------------------------
+*.log
+*.tlog
+*.trace
+
+# ------------------------------
+# OS Files
+# ------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ------------------------------
+# Generated files
+# ------------------------------
+Generated/
+*.generated.cs
+
+# ------------------------------
+# Publish
+# ------------------------------
+publish/
+*.publishsettings
+
+# ------------------------------
+# Rider / Resharper cache
+# ------------------------------
+*.sln.DotSettings.user
+
+# ------------------------------
+# Test results
+# ------------------------------
+TestResult.xml
+TestResults/
+
+# ------------------------------
+# Azure
+# ------------------------------
+*.azurePubxml
+*.publishproj
+
+# ------------------------------
+# Dotnet tools
+# ------------------------------
+.dotnet/
+
+# ------------------------------
+# Coverage
+# ------------------------------
+coverage/
+*.coverage
+*.coveragexml
+
+# ------------------------------
+# Others
+# ------------------------------
+*.pidb
+*.svclog
+*.cache
