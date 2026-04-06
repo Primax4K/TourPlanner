@@ -1,6 +1,47 @@
 <app-header/>
 <main class="mx-6 mt-4 flex-1 flex gap-6">
-  <app-tour-list class="flex-1"/>
+  @if(tourService.tourLogView()){
+    <app-tour-log-list class="flex-1" [tour]="tourService.tourLogView()!"></app-tour-log-list>
+  }@else{
+    <app-tour-list class="flex-1"/>
+  }
   <app-tour-map class="flex-2"></app-tour-map>
-</main> 
+  </main>
+  @if (overlay.type()) {
+  <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-1000">
+
+    <div class="bg-white p-6 rounded-xl w-96 relative">
+      <button (click)="overlay.close()"
+        class="absolute -top-2 -right-2 w-8 h-8 flex items-center justify-center 
+              rounded-full bg-white shadow hover:bg-gray-100">
+        ✕
+      </button>
+      @if (overlay.type() === 'edit' && tourService.selectedTour()) {
+        <app-edit-tour [tour]="tourService.selectedTour()!"></app-edit-tour>
+      }
+
+      @if (overlay.type() === 'create') {
+        <app-create-tour></app-create-tour>
+      }
+
+      @if (overlay.type() === 'delete' && tourService.selectedTour()) {
+        <div class="text-center">
+          <p class="mb-5">{{ tourService.selectedTour()!.name }} wirklich löschen?</p>
+          <button (click)="overlay.close(); tourService.deleteTour(tourService.selectedTour()!.id)" class="mx-5">Ja</button>
+          <button (click)="overlay.close()" class="mx-5">Abbrechen</button>
+        </div>
+      }
+
+      @if (overlay.type() === 'login') {
+        <app-login></app-login>
+      }
+
+      @if (overlay.type() === 'register') {
+        <app-register></app-register>
+      }
+
+
+    </div>
+  </div>
+}
 <app-tour-toolbar/>
