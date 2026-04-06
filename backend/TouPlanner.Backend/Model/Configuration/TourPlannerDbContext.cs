@@ -6,13 +6,11 @@ public class TourPlannerDbContext : DbContext {
 	public TourPlannerDbContext(DbContextOptions<TourPlannerDbContext> options)
 		: base(options) { }
 
-	public DbSet<ApplicationUser> Users => Set<ApplicationUser>();
-	public DbSet<Tour> Tours => Set<Tour>();
-	public DbSet<TourLog> TourLogs => Set<TourLog>();
-
+	public DbSet<ApplicationUser> Users { get; set; } = null!;
+	public DbSet<Tour> Tours { get; set; } = null!;
+	public DbSet<TourLog> TourLogs { get; set; } = null!;
+	
 	protected override void OnModelCreating(ModelBuilder modelBuilder) {
-		base.OnModelCreating(modelBuilder);
-
 		modelBuilder.Entity<ApplicationUser>(entity => {
 			entity.HasKey(x => x.Id);
 
