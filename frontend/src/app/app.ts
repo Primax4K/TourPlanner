@@ -20,6 +20,4 @@ import { TourLogList } from './components/tour-log-list/tour-log-list';
 })
 export class App {
   constructor(public overlay: OverlayService, public tourService:TourService) {}
-  protected readonly title = signal('frontend');
-  tour=input.required<Tour>()
 }

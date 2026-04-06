@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { RouteData, Tour } from '../model/model';
+import { RouteData, Tour, TourLog } from '../model/model';
 import * as polyline from '@mapbox/polyline';
 
 @Injectable({
@@ -15,15 +15,28 @@ export class TourService {
   tours = signal<Tour[]>([]);
   tourLogView = signal<Tour|null>(null);
   selectedTour = signal<Tour | null>(null);
+
   selectTour(tourId: number) {
     this.selectedTour.set(this.tours().find(t => t.id === tourId) || null);
   }
-
+  async createTourLog(tourId:number, tourLog:TourLog){
+    this.tours.update(tours=>tours.map(tour=>{
+      if(tour.id!==tourId){
+        return tour;
+      };
+      const newTour={
+        ...tour
+      };
+      newTour.tourLogs=[...newTour.tourLogs, tourLog];
+      return newTour;
+    }));
+    return Promise.resolve();
+  }
   async createTour(id:number, from_lat:number, from_long:number, 
     to_lat:number, to_long:number, name:string){
       const routeInfo=await this.getRouteForTour(from_lat, from_long, to_lat, to_long)
       this.tours.update(tours=>[...tours,new Tour(id, name, from_long, from_lat, to_long, to_lat, routeInfo)])
-      
+    return Promise.resolve();
   }
   async editTour(editedTour:Tour){
     const routeInfo=await this.getRouteForTour(
@@ -33,11 +46,14 @@ export class TourService {
       tours.map(t =>
         t.id === editedTour.id ? editedTour : t
       ));
-      this.selectTour(editedTour.id)
+    this.selectTour(editedTour.id)
   }
   async fetchAllTours(jwt_token:string){
-    this.createTour(1,48.2082,16.3738,48.2082,16.358,"Wien Tour 1");
-    this.createTour(2,48.2082,16.3738,48.2082,16.3938,"Wien Tour 2");
+    await this.createTour(1,48.2082,16.3738,48.2082,16.358,"Wien Tour 1");
+    await this.createTourLog(1, new TourLog(1, "Wow TourLog"));
+    await this.createTourLog(1, new TourLog(2, "Wowsi TourLog"));
+    await this.createTourLog(1, new TourLog(3, "Wowzer TourLog"));
+    await this.createTour(2,48.2082,16.3738,48.2082,16.3938,"Wien Tour 2");
   }
   async deleteTour(tourId:number){
     this.tours.update(tours=>
