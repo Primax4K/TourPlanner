@@ -1,6 +1,12 @@
 <section class="p-5 border-indigo-900 border-2 w-full rounded-3xl bg-indigo-100 h-full">
-<p>Hallo</p>
-<!--@for (tourLog of tour().tourLogs; track tourLog.id){
-    <app-tour-log-list-item [tourLog] = "tourLog"/>
-}-->
+<div class="flex border-b-2 border-indigo-900 pb-3">
+    <span class="text-2xl flex-1" (click)="back()">🔙</span>
+    <span class="align-middle flex-4 text-xl text-center text-indigo-900">
+        <b>{{tour().name}}</b> Logs
+    </span>
+    <span class="text-2xl flex-1"></span>
+</div>
+@for(tourLog of tour().tourLogs; track tourLog.id){
+    <p>{{tourLog.name}}</p>
+}
 </section>
