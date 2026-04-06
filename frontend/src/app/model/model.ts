@@ -6,7 +6,8 @@ export class Tour {
     public from_lat: number,
     public to_long: number,
     public to_lat: number,
-    public routeInfo:RouteData|null 
+    public routeInfo:RouteData|null=null,
+    public tourLogs:TourLog[]=[]
   ) {}
 }
 export interface RouteData {
@@ -19,5 +20,11 @@ export class Login{
   constructor(
     public username:string,
     public hashedPassword:string
+  ){}
+}
+export class TourLog{
+  constructor(
+    public id:number,
+    public name:string  
   ){}
 }

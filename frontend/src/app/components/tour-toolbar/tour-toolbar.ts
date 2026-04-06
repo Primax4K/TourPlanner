@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { OverlayService } from '../../services/OverlayService';
+import { TourService } from '../../services/TourService';
 
 @Component({
   selector: 'app-tour-toolbar',
@@ -6,4 +8,15 @@ import { Component } from '@angular/core';
   templateUrl: './tour-toolbar.html',
   styleUrl: './tour-toolbar.css',
 })
-export class TourToolbar {}
+export class TourToolbar {
+  constructor(public overlay: OverlayService, public tourService: TourService){}
+    create_tour(){
+      this.overlay.open('create')
+    }
+    edit_tour(){
+      this.overlay.open('edit')
+    }
+    delete_tour(){
+      this.overlay.open('delete')
+    }
+}

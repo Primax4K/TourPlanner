@@ -10,9 +10,13 @@ import { TourService } from '../../services/TourService';
 })
 export class TourListItem {
   constructor(public tourService: TourService) {}
+  math=Math
   tour = input.required<Tour>()
   isSelected = computed(() => {
     const selected = this.tourService.selectedTour();
     return selected !== null && selected.id === this.tour().id;
   });
+  activateTourLogView(){
+    this.tourService.tourLogView.update(val=>val=this.tour())
+  }
 }

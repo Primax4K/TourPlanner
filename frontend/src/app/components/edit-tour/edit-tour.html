@@ -1,0 +1,44 @@
+<div class="flex flex-col text-center mb-4">
+    <label class="mt-2">Tour Name: </label>
+    <input class="border p-1" value="{{tour().name}}" type="text" 
+           (input)="tourName.set($event.target.value)">
+    <label class="mt-2">difficulty: </label>
+    <div>
+        <label class="ml-2 mr-1" for="1">1</label>
+        <input name="difficulty" id="1" (change)="difficulty.set(1)" type="radio">
+        <label class="ml-2 mr-1" for="2">2</label>
+        <input name="difficulty" id="2" (change)="difficulty.set(2)" type="radio">
+        <label class="ml-2 mr-1" for="3">3</label>
+        <input name="difficulty" id="3" (change)="difficulty.set(3)" type="radio">
+        <label class="ml-2 mr-1" for="4">4</label>
+        <input name="difficulty" id="4" (change)="difficulty.set(4)" type="radio">
+        <label class="ml-2 mr-1" for="5">5</label>
+        <input name="difficulty" id="5" (change)="difficulty.set(5)" type="radio">
+    </div>
+    <label class="mt-2">transport type: </label>
+    <div>
+        <label class="ml-2 mr-1" for="car">Car</label>
+        <input name="transport" id="car" (change)="transport.set('car')" type="radio">
+        <label class="ml-2 mr-1" for="bicycle">Bicycle</label>
+        <input name="transport" id="bicycle" (change)="transport.set('bicycle')" type="radio">
+        <label class="ml-2 mr-1" for="walking">Walking</label>
+        <input name="transport" id="walking" (change)="transport.set('walking')" type="radio">
+        <label class="ml-2 mr-1" for="hiking">Hiking</label>
+        <input name="transport" id="hiking" (change)="transport.set('hiking')" type="radio">
+    </div>
+    <label class="mt-2">Description: </label>
+    <input class="border p-1" type="text">
+    <label class="mt-2">Starting Point Longitude: </label>
+    <input class="border p-1" type="text" value="{{tour().from_long}}" step="0.0001" 
+           (input)="start_long.set(parseFloatValue($event.target.value))">
+    <label class="mt-2">Starting Point Latitude: </label>
+    <input class="border p-1" type="text" value="{{tour().from_lat}}" step="0.0001" 
+           (input)="start_lat.set(parseFloatValue($event.target.value))">
+    <label class="mt-2">Finishing Point Longitude: </label>
+    <input class="border p-1" type="text" value="{{tour().to_long}}" step="0.0001" 
+           (input)="end_long.set(parseFloatValue($event.target.value))">
+    <label class="mt-2">Finishing Point Latitude: </label>
+    <input class="border p-1" type="text"value="{{tour().to_lat}}" step="0.0001" 
+           (input)="end_lat.set(parseFloatValue($event.target.value))">
+    <button class="mt-4 border p-2" (click)="submit()">Ändern</button>
+</div>

@@ -67,7 +67,7 @@ export class TourMap implements AfterViewInit{
     if(routeInfo){
     this.route = L.polyline(routeInfo.coordinates, {
       color: 'red',
-      weight: 8
+      weight: 5
     }).addTo(this.map);
     }
   }

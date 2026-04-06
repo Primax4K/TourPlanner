@@ -1,5 +1,6 @@
 <div class="py-2 mb-2.5 px-4 hover:bg-indigo-300 text-lg flex rounded-2xl"
     [class.bg-indigo-300]="isSelected()"
     [class.bg-indigo-50]="!isSelected()">
-    <span (click)="tourService.selectTour(tour().id)" class="grow">{{tour().name}}</span>
+    <span (click)="tourService.selectTour(tour().id)" class="grow">{{tour().name}} {{math.floor((tour().routeInfo?.duration ?? 0) / 60)}} Minuten</span>
+    <button (click)="activateTourLogView()">T</button>
 </div>

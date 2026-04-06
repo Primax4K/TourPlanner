@@ -9,39 +9,44 @@ export class TourService {
   constructor(){
     const jwt_token="test"
     if(jwt_token){
-      this.loadAllUsersTours(jwt_token)
+      this.fetchAllTours(jwt_token)
     }
   }
   tours = signal<Tour[]>([]);
-
+  tourLogView = signal<Tour|null>(null);
   selectedTour = signal<Tour | null>(null);
   selectTour(tourId: number) {
     this.selectedTour.set(this.tours().find(t => t.id === tourId) || null);
   }
 
-  async createTour(from_lat:number, from_long:number, 
+  async createTour(id:number, from_lat:number, from_long:number, 
     to_lat:number, to_long:number, name:string){
       const routeInfo=await this.getRouteForTour(from_lat, from_long, to_lat, to_long)
-      const tour = new Tour(-1, name, from_long, from_lat, to_long, to_lat, routeInfo)
+      this.tours.update(tours=>[...tours,new Tour(id, name, from_long, from_lat, to_long, to_lat, routeInfo)])
+      
+  }
+  async editTour(editedTour:Tour){
+    const routeInfo=await this.getRouteForTour(
+      editedTour.from_lat, editedTour.from_long, editedTour.to_lat, editedTour.to_long);
+      editedTour.routeInfo=routeInfo;
+    this.tours.update(tours =>
+      tours.map(t =>
+        t.id === editedTour.id ? editedTour : t
+      ));
+      this.selectTour(editedTour.id)
   }
   async fetchAllTours(jwt_token:string){
-    const fetchedTours:Tour[]=[
-      { id: 1, name: 'Stadtführung', from_lat: 48.2082, from_long: 16.3738, to_lat: 48.2082, to_long:16.358, routeInfo: null},
-      { id: 2, name: 'Bergtour',from_lat: 48.2082, from_long: 16.3738, to_lat: 48.2082, to_long:16.3938, routeInfo: null},
-    ]
-    fetchedTours.forEach(async (tour,idx)=>{
-      if(tour.routeInfo==null){
-        fetchedTours[idx].routeInfo = await this.getRouteForTour(tour.from_lat, tour.from_long, tour.to_lat, tour.to_long)
-      }
-    })
-    return fetchedTours
+    this.createTour(1,48.2082,16.3738,48.2082,16.358,"Wien Tour 1");
+    this.createTour(2,48.2082,16.3738,48.2082,16.3938,"Wien Tour 2");
   }
-  async loadAllUsersTours(jwt_token:string){
-    this.tours.set(await this.fetchAllTours(jwt_token))
+  async deleteTour(tourId:number){
+    this.tours.update(tours=>
+      tours.filter(t => t.id !== tourId)
+    );
   }
   private async getRouteForTour(
-    from_lat: number, from_long: number, 
-    to_lat: number, to_long: number
+    from_long: number, from_lat: number, 
+    to_long: number, to_lat: number
   ): Promise<RouteData> {
     
     const api_key = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjM2NTRjM2U5YTEwOTQyMGZhM2VhNGVkYjZlNDg2ZmMwIiwiaCI6Im11cm11cjY0In0=";
@@ -56,8 +61,8 @@ export class TourService {
       },
       body: JSON.stringify({
         coordinates: [
-          [from_long, from_lat],
-          [to_long, to_lat]
+          [from_lat, from_long],
+          [to_lat, to_long]
         ]
       })
     })
@@ -73,7 +78,7 @@ export class TourService {
     if (!route) {
       throw new Error('Keine Route gefunden');
     }
-
+    
     return {
       distance: route.summary.distance,
       duration: route.summary.duration,

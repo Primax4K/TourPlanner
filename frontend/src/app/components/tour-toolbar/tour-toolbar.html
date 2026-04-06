@@ -1,3 +1,13 @@
-<div class="bg-indigo-800 text-amber-50 px-10 py-2 mt-5">
-    <span>Create</span>
+<div class="bg-indigo-800 text-amber-50 px-10 py-2 mt-5 flex gap-4">
+    <button (click)="create_tour()">Create</button>
+    <button (click)="edit_tour()" 
+    [disabled]="!tourService.selectedTour()"
+     class="disabled:text-gray-200
+    disabled:cursor-not-allowed
+    disabled:opacity-60">Edit</button>
+    <button (click)="delete_tour()" 
+    [disabled]="!tourService.selectedTour()"
+    class="disabled:text-gray-200
+    disabled:cursor-not-allowed
+    disabled:opacity-60">Delete</button>
 </div>
