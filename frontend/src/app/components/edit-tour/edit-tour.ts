@@ -28,7 +28,7 @@ export class EditTour {
   submit() {
   this.tourService.editTour(new Tour(this.tour().id, this.tourName()==""?this.tour().name:this.tourName(),
   this.start_long()??this.tour().from_long, this.start_lat()??this.tour().from_lat,
-  this.end_long()??this.tour().to_long, this.end_lat()??this.tour().to_lat, null))  
+  this.end_long()??this.tour().to_long, this.end_lat()??this.tour().to_lat, null, this.tour().tourLogs, this.tour().description))  
   this.overlay.close();
   }
 }

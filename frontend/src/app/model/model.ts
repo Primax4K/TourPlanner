@@ -7,8 +7,22 @@ export class Tour {
     public to_long: number,
     public to_lat: number,
     public routeInfo:RouteData|null=null,
-    public tourLogs:TourLog[]=[]
+    public tourLogs:TourLog[]=[],
+    public description:string=""
   ) {}
+  public getChildFriendliness():number{
+    if(this.tourLogs.length===0){
+      return 0;
+    }
+    let score=0;
+    this.tourLogs.forEach(tourLog=>{
+      score+=(6-tourLog.difficulty)
+    })
+    return score/this.tourLogs.length;
+  }
+  public getPopularity():number{
+    return this.tourLogs.length;
+  }
 }
 export interface RouteData {
   distance: number;
@@ -25,6 +39,11 @@ export class Login{
 export class TourLog{
   constructor(
     public id:number,
-    public name:string  
+    public name:string,
+    public timeOfTour:Date,
+    public difficulty: number,
+    public totalDistanceInM: number,
+    public totalTimeInM: number,
+    public rating:number
   ){}
 }
