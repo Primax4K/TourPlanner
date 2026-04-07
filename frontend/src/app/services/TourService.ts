@@ -14,8 +14,12 @@ export class TourService {
   }
   tours = signal<Tour[]>([]);
   tourLogView = signal<Tour|null>(null);
+  selectedTourLog = signal<TourLog | null>(null);
   selectedTour = signal<Tour | null>(null);
 
+  sortTourByPopularity(tours:Tour[]):Tour[]{
+    return tours.sort((a,b)=>b.getPopularity()-a.getPopularity())
+  }
   selectTour(tourId: number) {
     this.selectedTour.set(this.tours().find(t => t.id === tourId) || null);
   }
@@ -24,18 +28,24 @@ export class TourService {
       if(tour.id!==tourId){
         return tour;
       };
-      const newTour={
-        ...tour
-      };
-      newTour.tourLogs=[...newTour.tourLogs, tourLog];
-      return newTour;
+      return new Tour(
+      tour.id,
+      tour.name,
+      tour.from_long,
+      tour.from_lat,
+      tour.to_long,
+      tour.to_lat,
+      tour.routeInfo,
+      [...tour.tourLogs, tourLog],
+      tour.description
+      );
     }));
     return Promise.resolve();
   }
   async createTour(id:number, from_lat:number, from_long:number, 
-    to_lat:number, to_long:number, name:string){
+    to_lat:number, to_long:number, name:string, description:string){
       const routeInfo=await this.getRouteForTour(from_lat, from_long, to_lat, to_long)
-      this.tours.update(tours=>[...tours,new Tour(id, name, from_long, from_lat, to_long, to_lat, routeInfo)])
+      this.tours.update(tours=>[...tours,new Tour(id, name, from_long, from_lat, to_long, to_lat, routeInfo, [], description)])
     return Promise.resolve();
   }
   async editTour(editedTour:Tour){
@@ -49,11 +59,11 @@ export class TourService {
     this.selectTour(editedTour.id)
   }
   async fetchAllTours(jwt_token:string){
-    await this.createTour(1,48.2082,16.3738,48.2082,16.358,"Wien Tour 1");
-    await this.createTourLog(1, new TourLog(1, "Wow TourLog"));
-    await this.createTourLog(1, new TourLog(2, "Wowsi TourLog"));
-    await this.createTourLog(1, new TourLog(3, "Wowzer TourLog"));
-    await this.createTour(2,48.2082,16.3738,48.2082,16.3938,"Wien Tour 2");
+    await this.createTour(1,48.2082,16.3738,48.2082,16.358,"Wien Tour 1", "schöne tour nach westen");
+    await this.createTourLog(1, new TourLog(1, "Wow TourLog", new Date("2026-04-04T10:30:00Z"), 2, 1800, 40, 4));
+    await this.createTourLog(1, new TourLog(2, "Wow2 TourLog", new Date("2026-04-06T10:30:00Z"), 2, 2000, 40, 5));
+    await this.createTourLog(1, new TourLog(3, "Wow3 TourLog", new Date("2026-04-07T10:30:00Z"), 2, 2100, 35, 3));
+    await this.createTour(2,48.2082,16.3738,48.2082,16.3938,"Wien Tour 2","schöne tour nach osten");
   }
   async deleteTour(tourId:number){
     this.tours.update(tours=>

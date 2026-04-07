@@ -1,9 +1,10 @@
 import { Component, input } from '@angular/core';
 import { Tour } from '../../model/model';
 import { TourService } from '../../services/TourService';
+import { TourLogListItem } from '../tour-log-list-item/tour-log-list-item';
 @Component({
   selector: 'app-tour-log-list',
-  imports: [],
+  imports: [TourLogListItem],
   templateUrl: './tour-log-list.html',
   styleUrl: './tour-log-list.css',
 })

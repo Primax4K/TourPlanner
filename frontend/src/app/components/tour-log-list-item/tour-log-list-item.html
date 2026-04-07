@@ -1,1 +1,8 @@
-<p>{{ tourLog().name }}</p>
+<div class="flex gap-4 cursor-pointer py-2 mb-2.5 px-4 hover:bg-indigo-300 text-lg rounded-2xl"
+    [class.bg-indigo-50]="true">
+    <span>{{tourLog().name}}</span>
+    <span>D: {{tourLog().difficulty}}/5</span>
+    <span>R:{{tourLog().rating}}/5</span>
+    <span>Time {{tourLog().totalTimeInM}}mins</span>
+    <span>Distance {{tourLog().totalDistanceInM}}m</span>
+</div>

@@ -18,7 +18,7 @@ export class CreateTour {
   end_long = signal<number|null>(null);
   end_lat = signal<number|null>(null);
   submit() {
-    this.tourService.createTour(-1, this.start_long()??0,  this.start_lat()??0, this.end_long()??0, this.end_lat()??0,this.tourName())
+    this.tourService.createTour(-1, this.start_long()??0,  this.start_lat()??0, this.end_long()??0, this.end_lat()??0,this.tourName(),this.description())
   }
   
   parseFloatValue(value: string): number {
