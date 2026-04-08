@@ -8,9 +8,11 @@ public class Tour {
 
 	[MaxLength(2000)] public string? Description { get; set; }
 
-	[Required] [MaxLength(200)] public string From { get; set; } = string.Empty;
-
-	[Required] [MaxLength(200)] public string To { get; set; } = string.Empty;
+	[Required] public double FromLongitude { get; set; }
+	[Required] public double FromLatitude { get; set; }
+	
+	[Required] public double ToLongitude { get; set; }
+	[Required] public double ToLatitude { get; set; }
 
 	[Required] public TransportType TransportType { get; set; }
 
