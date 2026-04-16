@@ -14,6 +14,6 @@ export class TourLogList {
   }
   tour=input.required<Tour>();
   back(){
-    this.tourService.tourLogView.update(val => val=null)
+    this.tourService.tourLogView.update(val=>val=false)
   }
 }

@@ -11,10 +11,12 @@ import { EditTour } from './components/edit-tour/edit-tour';
 import { TourService } from './services/TourService';
 import { Tour } from './model/model';
 import { TourLogList } from './components/tour-log-list/tour-log-list';
+import { EditLog } from './components/edit-log/edit-log';
+import { CreateLog } from './components/create-log/create-log';
 
 @Component({
   selector: 'app-root',
-  imports: [TourList, Header, TourMap, TourToolbar, Login, Register, CreateTour, EditTour, TourLogList],
+  imports: [TourList, Header, TourMap, TourToolbar, Login, Register, CreateTour, EditTour, TourLogList, EditLog, CreateLog],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
