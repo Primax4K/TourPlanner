@@ -2,19 +2,6 @@
     <label class="mt-2">Tour Name: </label>
     <input class="border p-1" value="{{tour().name}}" type="text" 
            (input)="tourName.set($event.target.value)">
-    <label class="mt-2">difficulty: </label>
-    <div>
-        <label class="ml-2 mr-1" for="1">1</label>
-        <input name="difficulty" id="1" (change)="difficulty.set(1)" type="radio">
-        <label class="ml-2 mr-1" for="2">2</label>
-        <input name="difficulty" id="2" (change)="difficulty.set(2)" type="radio">
-        <label class="ml-2 mr-1" for="3">3</label>
-        <input name="difficulty" id="3" (change)="difficulty.set(3)" type="radio">
-        <label class="ml-2 mr-1" for="4">4</label>
-        <input name="difficulty" id="4" (change)="difficulty.set(4)" type="radio">
-        <label class="ml-2 mr-1" for="5">5</label>
-        <input name="difficulty" id="5" (change)="difficulty.set(5)" type="radio">
-    </div>
     <label class="mt-2">transport type: </label>
     <div>
         <label class="ml-2 mr-1" for="car">Car</label>

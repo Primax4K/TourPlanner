@@ -1,5 +1,6 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { TourLog } from '../../model/model';
+import { TourService } from '../../services/TourService';
 
 @Component({
   selector: 'app-tour-log-list-item',
@@ -9,4 +10,17 @@ import { TourLog } from '../../model/model';
 })
 export class TourLogListItem {
   tourLog=input.required<TourLog>();
+  constructor(public tourService:TourService){}
+  isSelected=computed(() => {
+    const selected = this.tourService.selectedTourLog();
+    return selected !== null && selected.id === this.tourLog().id;
+  });
+  toggleSelection(){
+    if(this.isSelected()){
+      this.tourService.selectTourLog(-1);
+    }
+    else{
+      this.tourService.selectTourLog(this.tourLog().id)
+    }
+  }
 }
