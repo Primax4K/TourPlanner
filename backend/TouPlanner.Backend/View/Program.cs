@@ -4,7 +4,7 @@ using Domain.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Model.Configuration;
 using View.Auth;
 
@@ -41,19 +41,9 @@ builder.Services.AddSwaggerGen(options =>
 		Description = "Paste only the JWT token here"
 	});
 
-	options.AddSecurityRequirement(new OpenApiSecurityRequirement
+	options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
 	{
-		{
-			new OpenApiSecurityScheme
-			{
-				Reference = new OpenApiReference
-				{
-					Type = ReferenceType.SecurityScheme,
-					Id = "Bearer"
-				}
-			},
-			Array.Empty<string>()
-		}
+		[new OpenApiSecuritySchemeReference("Bearer", document)] = new List<string>()
 	});
 });
 
