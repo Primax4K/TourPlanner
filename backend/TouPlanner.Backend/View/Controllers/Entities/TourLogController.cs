@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Domain.Repositories.Interfaces;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
@@ -10,22 +10,25 @@ using View.DTOs;
 namespace View.Controllers.Entities;
 
 [ApiController]
-[Route("api/tour")]
-public class TourController(ITourRepository repository, ILogger<TourController> logger)
-	: AController<Tour, CreateTourDto, ReadTourDto, UpdateTourDto>(repository, logger) {
-	
+[Route("api/tourlog")]
+public class TourLogController(ITourLogRepository repository, ITourRepository tourRepository, ILogger<TourLogController> logger)
+	: AController<TourLog, CreateTourLogDto, ReadTourLogDto, UpdateTourLogDto>(repository, logger) {
+
 	[Authorize]
 	[HttpPost]
-	public override async Task<ActionResult<ReadTourDto>> CreateAsync(CreateTourDto entity, CancellationToken ct) {
+	public override async Task<ActionResult<ReadTourLogDto>> CreateAsync(CreateTourLogDto entity, CancellationToken ct) {
 		try {
-			Tour toCreate = entity.Adapt<Tour>();
+			if (!await tourRepository.ExistsAsync(entity.TourId, ct))
+				return NotFound($"Tour {entity.TourId} does not exist.");
+
+			TourLog toCreate = entity.Adapt<TourLog>();
 
 			if (!Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
 				return Unauthorized("Invalid User");
-			
+
 			toCreate.UserId = userId;
 
-			return Ok((await repository.CreateAsync(toCreate, ct)).Adapt<ReadTourDto>());
+			return Ok((await repository.CreateAsync(toCreate, ct)).Adapt<ReadTourLogDto>());
 		}
 		catch (OperationCanceledException) {
 			logger.LogError("Zeitüberschreitung der Anforderungen!");

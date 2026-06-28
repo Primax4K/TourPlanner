@@ -47,7 +47,8 @@ public abstract class AController<TEntity, TCreateEntityDto, TReadEntityDto, TUp
 				return NotFound();
 			}
 
-			await repository.UpdateAsync(record.Adapt<TEntity>(), ct);
+			record.Adapt(data);
+			await repository.UpdateAsync(data, ct);
 			logger.LogInformation($"Updated Entity: {id}");
 
 			return NoContent();
