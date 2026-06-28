@@ -1,0 +1,44 @@
+<div class="flex flex-col text-center mb-4">
+    <label class="mt-2">Tour log Name: </label>
+    <input class="border p-1" type="text" required 
+            value="{{tourLog().name}}"
+           (input)="tourName.set($event.target.value)">
+    <label class="mt-2">difficulty: </label>
+    <div>
+        <label class="ml-2 mr-1" for="1">1</label>
+        <input name="difficulty" id="1" (change)="difficulty.set(1)" type="radio">
+        <label class="ml-2 mr-1" for="2">2</label>
+        <input name="difficulty" id="2" (change)="difficulty.set(2)" type="radio">
+        <label class="ml-2 mr-1" for="3">3</label>
+        <input name="difficulty" id="3" (change)="difficulty.set(3)" type="radio">
+        <label class="ml-2 mr-1" for="4">4</label>
+        <input name="difficulty" id="4" (change)="difficulty.set(4)" type="radio">
+        <label class="ml-2 mr-1" for="5">5</label>
+        <input name="difficulty" id="5" (change)="difficulty.set(5)" type="radio">
+    </div>
+    <label class="mt-2">rating: </label>
+    <div>
+        <label class="ml-2 mr-1" for="1">1</label>
+        <input name="rating" id="1" (change)="rating.set(1)" type="radio">
+        <label class="ml-2 mr-1" for="2">2</label>
+        <input name="rating" id="2" (change)="rating.set(2)" type="radio">
+        <label class="ml-2 mr-1" for="3">3</label>
+        <input name="rating" id="3" (change)="rating.set(3)" type="radio">
+        <label class="ml-2 mr-1" for="4">4</label>
+        <input name="rating" id="4" (change)="rating.set(4)" type="radio">
+        <label class="ml-2 mr-1" for="5">5</label>
+        <input name="rating" id="5" (change)="rating.set(5)" type="radio">
+    </div>
+    <label class="mt-2">Comment: </label>
+    <input class="border p-1" (input)="comment.set($event.target.value)" type="text" value="{{tourLog().comment}}">
+    <label>Time of the tour</label>
+    <input type="time" value="{{timeString()}}" (change)="timeString.set($event.target.value)">
+    <label>Date of the tour</label>
+    <input type="date" value="{{dateString()}}" (change)="dateString.set($event.target.value)">
+    <label class="mt-2">Distance in m: </label>
+    <input class="border p-1" (input)="distance.set(parseFloatValue($event.target.value))" 
+    type="number" value="{{tourLog().totalDistanceInM}}">
+    <label class="mt-2">Time in m: </label>
+    <input class="border p-1" type="number" (input)="time.set(parseFloatValue($event.target.value))" value="{{tourLog().totalTimeInM}}">
+    <button class="mt-4 border p-2" (click)="submit()">Ändern</button>
+</div>

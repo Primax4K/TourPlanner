@@ -8,7 +8,8 @@ export class Tour {
     public to_lat: number,
     public routeInfo:RouteData|null=null,
     public tourLogs:TourLog[]=[],
-    public description:string=""
+    public description:string="",
+    public transport:TransportType=TransportType.Car
   ) {}
   public getChildFriendliness():number{
     if(this.tourLogs.length===0){
@@ -23,6 +24,12 @@ export class Tour {
   public getPopularity():number{
     return this.tourLogs.length;
   }
+}
+export enum TransportType{
+  Car=0,
+  Bicycle,
+  Walking,
+  Hiking
 }
 export interface RouteData {
   distance: number;
@@ -44,6 +51,12 @@ export class TourLog{
     public difficulty: number,
     public totalDistanceInM: number,
     public totalTimeInM: number,
-    public rating:number
+    public rating:number,
+    public comment:string
   ){}
+  public formatedTimeDate():string{
+    const date=this.timeOfTour.getDate()+"."+this.timeOfTour.getMonth()+"."+this.timeOfTour.getFullYear()+
+    " "+this.timeOfTour.getHours()+":"+this.timeOfTour.getMinutes()+"Uhr";
+    return date;
+  }
 }

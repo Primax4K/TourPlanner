@@ -19,7 +19,10 @@ export class TourListItem {
     return selected !== null && selected.id === this.tour().id;
   });
   activateTourLogView(){
-    this.tourService.tourLogView.update(val=>val=this.tour())
+    this.tourService.tourLogView.update(val=>true);
+    queueMicrotask(()=>{
+      this.tourService.selectTour(this.tour().id);
+    });
   }
   toggleSelection(){
     if(this.isSelected()){

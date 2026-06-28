@@ -1,7 +1,7 @@
 <app-header/>
 <main class="mx-6 mt-4 flex-1 flex gap-6">
-  @if(tourService.tourLogView()){
-    <app-tour-log-list class="flex-1" [tour]="tourService.tourLogView()!"></app-tour-log-list>
+  @if(tourService.tourLogView() && tourService.selectedTour()){
+    <app-tour-log-list class="flex-1" [tour]="tourService.selectedTour()!"></app-tour-log-list>
   }@else{
     <app-tour-list class="flex-1"/>
   }
@@ -39,6 +39,21 @@
       @if (overlay.type() === 'register') {
         <app-register></app-register>
       }
+
+      @if (overlay.type() === 'deleteLog' && tourService.selectedTour() && tourService.selectedTourLog()) {
+        <div class="text-center">
+          <p class="mb-5">{{ tourService.selectedTourLog()!.name }} wirklich löschen?</p>
+          <button (click)="overlay.close(); tourService.deleteTourLog(tourService.selectedTour()!.id, tourService.selectedTourLog()!.id)" class="mx-5">Ja</button>
+          <button (click)="overlay.close()" class="mx-5">Abbrechen</button>
+        </div>
+      }
+      @if(overlay.type()==='editLog'&& tourService.selectedTourLog() && tourService.selectedTour()){
+        <app-edit-log [tour]="tourService.selectedTour()!" [tourLog]="tourService.selectedTourLog()!"></app-edit-log>
+      }
+      @if(overlay.type()==='createLog'&& tourService.selectedTour()){
+        <app-create-log [tour]="tourService.selectedTour()!"></app-create-log>
+      }
+
 
 
     </div>

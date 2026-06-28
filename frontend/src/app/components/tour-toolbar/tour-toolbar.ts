@@ -19,4 +19,13 @@ export class TourToolbar {
     delete_tour(){
       this.overlay.open('delete')
     }
+    create_tourLog(){
+      this.overlay.open('createLog');
+    }
+    edit_tourLog(){
+      this.overlay.open('editLog');
+    }
+    delete_tourLog(){
+      this.overlay.open('deleteLog');
+    }
 }
