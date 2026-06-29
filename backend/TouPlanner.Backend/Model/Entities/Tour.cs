@@ -36,4 +36,7 @@ public class Tour {
 	public ApplicationUser User { get; set; } = null!;
 
 	public ICollection<TourLog> TourLogs { get; set; } = new List<TourLog>();
+
+	// Generated tsvector column for full-text search (Name, Description, RouteInformation)
+	public NpgsqlTsVector SearchVector { get; set; } = null!;
 }

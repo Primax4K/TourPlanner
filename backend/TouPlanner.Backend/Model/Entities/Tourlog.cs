@@ -23,4 +23,7 @@ public class TourLog {
 	[Range(1, 5)] public int Rating { get; set; }
 
 	public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
+
+	// Generated tsvector column for full-text search (Comment)
+	public NpgsqlTsVector SearchVector { get; set; } = null!;
 }

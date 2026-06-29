@@ -33,6 +33,13 @@ public class TourPlannerDbContext : DbContext {
 				.WithOne(x => x.Tour)
 				.HasForeignKey(x => x.TourId)
 				.OnDelete(DeleteBehavior.Cascade);
+
+			entity.HasGeneratedTsVectorColumn(
+					x => x.SearchVector,
+					"english",
+					x => new { x.Name, x.Description, x.RouteInformation })
+				.HasIndex(x => x.SearchVector)
+				.HasMethod("GIN");
 		});
 
 		modelBuilder.Entity<TourLog>(entity => {
@@ -46,6 +53,13 @@ public class TourPlannerDbContext : DbContext {
 				.OnDelete(DeleteBehavior.Restrict);
 
 			entity.HasIndex(x => new { x.TourId, x.DateTimeUtc });
+
+			entity.HasGeneratedTsVectorColumn(
+					x => x.SearchVector,
+					"english",
+					x => new { x.Comment })
+				.HasIndex(x => x.SearchVector)
+				.HasMethod("GIN");
 		});
 	}
 }

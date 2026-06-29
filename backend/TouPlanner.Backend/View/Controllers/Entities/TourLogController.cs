@@ -39,4 +39,25 @@ public class TourLogController(ITourLogRepository repository, ITourRepository to
 			return Problem("Fehler beim Abrufen der Entität!");
 		}
 	}
+
+	[Authorize]
+	[HttpGet("search")]
+	public async Task<ActionResult<List<ReadTourLogDto>>> SearchAsync([FromQuery] string q, CancellationToken ct) {
+		try {
+			if (string.IsNullOrWhiteSpace(q))
+				return BadRequest("Query must not be empty.");
+
+			List<TourLog> results = await repository.SearchAsync(q, ct);
+
+			return Ok(results.Adapt<List<ReadTourLogDto>>());
+		}
+		catch (OperationCanceledException) {
+			logger.LogError("Zeitüberschreitung der Anforderungen!");
+			return StatusCode(408);
+		}
+		catch (Exception e) {
+			logger.LogError(e, "Fehler beim Abrufen der Entität!");
+			return Problem("Fehler beim Abrufen der Entität!");
+		}
+	}
 }

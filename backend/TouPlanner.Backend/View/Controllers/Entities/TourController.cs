@@ -39,4 +39,46 @@ public class TourController(ITourRepository repository, ILogger<TourController> 
 			return Problem("Fehler beim Abrufen der Entität!");
 		}
 	}
+
+	[Authorize]
+	[HttpGet("mine")]
+	public async Task<ActionResult<List<ReadTourDto>>> ReadOwnAsync(CancellationToken ct) {
+		try {
+			if (!TryGetCurrentUserId(out var userId))
+				return Unauthorized("Invalid User");
+
+			List<Tour> results = await repository.ReadAsync(t => t.UserId == userId, ct);
+
+			return Ok(results.Adapt<List<ReadTourDto>>());
+		}
+		catch (OperationCanceledException) {
+			logger.LogError("Zeitüberschreitung der Anforderungen!");
+			return StatusCode(408);
+		}
+		catch (Exception e) {
+			logger.LogError(e, "Fehler beim Abrufen der Entität!");
+			return Problem("Fehler beim Abrufen der Entität!");
+		}
+	}
+
+	[Authorize]
+	[HttpGet("search")]
+	public async Task<ActionResult<List<ReadTourDto>>> SearchAsync([FromQuery] string q, CancellationToken ct) {
+		try {
+			if (string.IsNullOrWhiteSpace(q))
+				return BadRequest("Query must not be empty.");
+
+			List<Tour> results = await repository.SearchAsync(q, ct);
+
+			return Ok(results.Where(IsOwner).Adapt<List<ReadTourDto>>());
+		}
+		catch (OperationCanceledException) {
+			logger.LogError("Zeitüberschreitung der Anforderungen!");
+			return StatusCode(408);
+		}
+		catch (Exception e) {
+			logger.LogError(e, "Fehler beim Abrufen der Entität!");
+			return Problem("Fehler beim Abrufen der Entität!");
+		}
+	}
 }
