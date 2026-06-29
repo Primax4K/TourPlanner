@@ -13,7 +13,10 @@ namespace View.Controllers.Entities;
 [Route("api/tour")]
 public class TourController(ITourRepository repository, ILogger<TourController> logger)
 	: AController<Tour, CreateTourDto, ReadTourDto, UpdateTourDto>(repository, logger) {
-	
+
+	protected override bool IsOwner(Tour entity) =>
+		TryGetCurrentUserId(out var userId) && entity.UserId == userId;
+
 	[Authorize]
 	[HttpPost]
 	public override async Task<ActionResult<ReadTourDto>> CreateAsync(CreateTourDto entity, CancellationToken ct) {

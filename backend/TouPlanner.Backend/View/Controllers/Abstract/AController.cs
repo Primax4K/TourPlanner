@@ -1,4 +1,5 @@
-﻿using Domain.Repositories.Interfaces;
+﻿using System.Security.Claims;
+using Domain.Repositories.Interfaces;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,13 @@ public abstract class AController<TEntity, TCreateEntityDto, TReadEntityDto, TUp
 	where TCreateEntityDto : class
 	where TUpdateEntityDto : class
 	where TReadEntityDto : class {
+
+
+	protected virtual bool IsOwner(TEntity entity) => true;
+
+	protected bool TryGetCurrentUserId(out Guid userId) =>
+		Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
+
 	[Authorize]
 	[HttpGet("{id}")]
 	public virtual async Task<ActionResult<TReadEntityDto>> ReadAsync(Guid id, CancellationToken ct) {
@@ -20,6 +28,11 @@ public abstract class AController<TEntity, TCreateEntityDto, TReadEntityDto, TUp
 
 			if (data is null) {
 				logger.LogInformation($"Invalid Request: Entity not present - {id}");
+				return NotFound();
+			}
+
+			if (!IsOwner(data)) {
+				logger.LogInformation($"Invalid Request: Entity not owned by current user - {id}");
 				return NotFound();
 			}
 
@@ -47,6 +60,11 @@ public abstract class AController<TEntity, TCreateEntityDto, TReadEntityDto, TUp
 				return NotFound();
 			}
 
+			if (!IsOwner(data)) {
+				logger.LogInformation($"Invalid Request: Entity not owned by current user - {id}");
+				return NotFound();
+			}
+
 			record.Adapt(data);
 			await repository.UpdateAsync(data, ct);
 			logger.LogInformation($"Updated Entity: {id}");
@@ -70,6 +88,11 @@ public abstract class AController<TEntity, TCreateEntityDto, TReadEntityDto, TUp
 			TEntity? data = await repository.ReadAsync(id, ct);
 
 			if (data is null) {
+				return NotFound();
+			}
+
+			if (!IsOwner(data)) {
+				logger.LogInformation($"Invalid Request: Entity not owned by current user - {id}");
 				return NotFound();
 			}
 
