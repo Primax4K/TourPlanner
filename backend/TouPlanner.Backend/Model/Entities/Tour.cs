@@ -10,17 +10,17 @@ public class Tour {
 
 	[Required] public double FromLongitude { get; set; }
 	[Required] public double FromLatitude { get; set; }
-	
+
 	[Required] public double ToLongitude { get; set; }
 	[Required] public double ToLatitude { get; set; }
 
 	[Required] public TransportType TransportType { get; set; }
 
-	public double DistanceKm { get; set; }
+	public double Distance { get; set; }
 
-	public int EstimatedTimeMinutes { get; set; }
+	public int Duration { get; set; }
 
-	[MaxLength(4000)] public string? RouteInformation { get; set; }
+	[MaxLength(4000)] public string? Coordinates { get; set; }
 
 	[MaxLength(500)] public string? MapImagePath { get; set; }
 
@@ -37,6 +37,6 @@ public class Tour {
 
 	public ICollection<TourLog> TourLogs { get; set; } = new List<TourLog>();
 
-	// Generated tsvector column for full-text search (Name, Description, RouteInformation)
+	// Generated tsvector column for full-text search (Name, Description, Coordinates)
 	public NpgsqlTsVector SearchVector { get; set; } = null!;
 }

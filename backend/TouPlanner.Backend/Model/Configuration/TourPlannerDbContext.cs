@@ -21,7 +21,7 @@ public class TourPlannerDbContext : DbContext {
 		modelBuilder.Entity<Tour>(entity => {
 			entity.HasKey(x => x.Id);
 
-			entity.Property(x => x.DistanceKm).HasPrecision(10, 2);
+			entity.Property(x => x.Distance).HasPrecision(10, 2);
 			entity.Property(x => x.ChildFriendliness).HasPrecision(5, 2);
 
 			entity.HasOne(x => x.User)
@@ -37,7 +37,7 @@ public class TourPlannerDbContext : DbContext {
 			entity.HasGeneratedTsVectorColumn(
 					x => x.SearchVector,
 					"english",
-					x => new { x.Name, x.Description, x.RouteInformation })
+					x => new { x.Name, x.Description })
 				.HasIndex(x => x.SearchVector)
 				.HasMethod("GIN");
 		});

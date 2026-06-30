@@ -1,4 +1,4 @@
-﻿using Model;
+using Model;
 
 namespace View.DTOs;
 
@@ -10,9 +10,9 @@ public record CreateTourDto(
 	double ToLongitude,
 	double ToLatitude,
 	TransportType TransportType,
-	double DistanceKm,
-	int EstimatedTimeMinutes,
-	string? RouteInformation,
+	double Distance,
+	int Duration,
+	string? Coordinates,
 	string? MapImagePath,
 	double ChildFriendliness
 );
@@ -26,9 +26,9 @@ public record ReadTourDto(
 	double ToLongitude,
 	double ToLatitude,
 	TransportType TransportType,
-	double DistanceKm,
-	int EstimatedTimeMinutes,
-	string? RouteInformation,
+	double Distance,
+	int Duration,
+	string? Coordinates,
 	string? MapImagePath,
 	int Popularity,
 	double ChildFriendliness,
@@ -45,9 +45,9 @@ public record UpdateTourDto(
 	double ToLongitude,
 	double ToLatitude,
 	TransportType TransportType,
-	double DistanceKm,
-	int EstimatedTimeMinutes,
-	string? RouteInformation,
+	double Distance,
+	int Duration,
+	string? Coordinates,
 	string? MapImagePath,
 	double ChildFriendliness
 );
