@@ -51,7 +51,7 @@ public abstract class AController<TEntity, TCreateEntityDto, TReadEntityDto, TUp
 
 	[Authorize]
 	[HttpPut("{id}")]
-	public virtual async Task<ActionResult> UpdateAsync(Guid id, TUpdateEntityDto record, CancellationToken ct) {
+	public virtual async Task<ActionResult<TReadEntityDto>> UpdateAsync(Guid id, TUpdateEntityDto record, CancellationToken ct) {
 		try {
 			TEntity? data = await repository.ReadAsync(id, ct);
 
@@ -69,7 +69,7 @@ public abstract class AController<TEntity, TCreateEntityDto, TReadEntityDto, TUp
 			await repository.UpdateAsync(data, ct);
 			logger.LogInformation($"Updated Entity: {id}");
 
-			return NoContent();
+			return Ok(data.Adapt<TReadEntityDto>());
 		}
 		catch (OperationCanceledException) {
 			logger.LogError("Zeitüberschreitung der Anforderungen!");
