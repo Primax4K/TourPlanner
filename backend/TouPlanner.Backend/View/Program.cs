@@ -9,6 +9,7 @@ using Model.Configuration;
 using View.Auth;
 using View.Exceptions;
 using View.Seeding;
+using View.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,7 @@ builder.Services.AddTransient<ITourRepository, TourRepository>();
 builder.Services.AddTransient<ITourLogRepository, TourLogRepository>();
 
 
+builder.Services.AddHttpClient<IRouteService, RouteService>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddControllers();

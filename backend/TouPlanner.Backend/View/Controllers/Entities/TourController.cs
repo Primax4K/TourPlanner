@@ -6,12 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Model.Entities;
 using View.Controllers.Abstract;
 using View.DTOs;
+using View.Services;
 
 namespace View.Controllers.Entities;
 
 [ApiController]
 [Route("api/tour")]
-public class TourController(ITourRepository repository, ILogger<TourController> logger)
+public class TourController(ITourRepository repository, IRouteService routeService, ILogger<TourController> logger)
 	: AController<Tour, CreateTourDto, ReadTourDto, UpdateTourDto>(repository, logger) {
 
 	protected override bool IsOwner(Tour entity) =>
@@ -20,14 +21,52 @@ public class TourController(ITourRepository repository, ILogger<TourController> 
 	[Authorize]
 	[HttpPost]
 	public override async Task<ActionResult<ReadTourDto>> CreateAsync(CreateTourDto entity, CancellationToken ct) {
-		Tour toCreate = entity.Adapt<Tour>();
-
 		if (!TryGetCurrentUserId(out var userId))
 			return Unauthorized("Invalid User");
 
+		Tour toCreate = entity.Adapt<Tour>();
 		toCreate.UserId = userId;
 
+		var route = await routeService.GetRouteAsync(
+			toCreate.TransportType,
+			toCreate.FromLongitude, toCreate.FromLatitude,
+			toCreate.ToLongitude, toCreate.ToLatitude,
+			ct);
+
+		toCreate.Distance = route.DistanceKm;
+		toCreate.Duration = route.DurationMinutes;
+		toCreate.Coordinates = route.EncodedGeometry;
+
 		return Ok((await repository.CreateAsync(toCreate, ct)).Adapt<ReadTourDto>());
+	}
+
+	[Authorize]
+	[HttpPut("{id}")]
+	public override async Task<ActionResult<ReadTourDto>> UpdateAsync(Guid id, UpdateTourDto record, CancellationToken ct) {
+		Tour? data = await repository.ReadAsync(id, ct);
+
+		if (data is null)
+			return NotFound();
+
+		if (!IsOwner(data))
+			return NotFound();
+
+		record.Adapt(data);
+
+		var route = await routeService.GetRouteAsync(
+			data.TransportType,
+			data.FromLongitude, data.FromLatitude,
+			data.ToLongitude, data.ToLatitude,
+			ct);
+
+		data.Distance = route.DistanceKm;
+		data.Duration = route.DurationMinutes;
+		data.Coordinates = route.EncodedGeometry;
+		data.UpdatedAtUtc = DateTime.UtcNow;
+
+		await repository.UpdateAsync(data, ct);
+
+		return Ok(data.Adapt<ReadTourDto>());
 	}
 
 	[Authorize]
