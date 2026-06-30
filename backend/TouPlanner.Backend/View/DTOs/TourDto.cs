@@ -13,7 +13,6 @@ public record CreateTourDto(
 	double Distance,
 	int Duration,
 	string? Coordinates,
-	string? MapImagePath,
 	double ChildFriendliness
 );
 
@@ -29,7 +28,6 @@ public record ReadTourDto(
 	double Distance,
 	int Duration,
 	string? Coordinates,
-	string? MapImagePath,
 	int Popularity,
 	double ChildFriendliness,
 	DateTime CreatedAtUtc,
@@ -48,6 +46,5 @@ public record UpdateTourDto(
 	double Distance,
 	int Duration,
 	string? Coordinates,
-	string? MapImagePath,
 	double ChildFriendliness
 );

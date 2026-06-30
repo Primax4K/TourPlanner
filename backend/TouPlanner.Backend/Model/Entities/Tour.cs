@@ -22,8 +22,6 @@ public class Tour {
 
 	[MaxLength(4000)] public string? Coordinates { get; set; }
 
-	[MaxLength(500)] public string? MapImagePath { get; set; }
-
 	// Computed/derived fields persisted for searching/filtering
 	public int Popularity { get; set; }
 
