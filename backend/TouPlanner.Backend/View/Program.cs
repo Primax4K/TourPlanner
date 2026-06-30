@@ -8,6 +8,7 @@ using Microsoft.OpenApi;
 using Model.Configuration;
 using View.Auth;
 using View.Exceptions;
+using View.Seeding;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -95,5 +96,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+await DataSeeder.SeedAsync(app.Services);
 
 app.Run();

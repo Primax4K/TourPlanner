@@ -36,7 +36,7 @@ public class TourController(ITourRepository repository, ILogger<TourController> 
 		if (!TryGetCurrentUserId(out var userId))
 			return Unauthorized("Invalid User");
 
-		List<Tour> results = await repository.ReadAsync(t => t.UserId == userId, ct);
+		List<Tour> results = await repository.ReadByUserWithLogsAsync(userId, ct);
 
 		return Ok(results.Adapt<List<ReadTourDto>>());
 	}

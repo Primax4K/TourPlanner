@@ -1,6 +1,13 @@
 ﻿namespace Domain.Repositories.Implementations;
 
 public class TourRepository(TourPlannerDbContext context) : ARepository<Tour>(context), ITourRepository {
+	public async Task<List<Tour>> ReadByUserWithLogsAsync(Guid userId, CancellationToken ct) {
+		return await Table
+			.Include(t => t.TourLogs)
+			.Where(t => t.UserId == userId)
+			.ToListAsync(ct);
+	}
+
 	public async Task<List<Tour>> SearchAsync(string query, CancellationToken ct) {
 		string prefixQuery = BuildPrefixTsQuery(query);
 

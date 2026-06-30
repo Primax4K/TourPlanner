@@ -32,7 +32,8 @@ public record ReadTourDto(
 	double ChildFriendliness,
 	DateTime CreatedAtUtc,
 	DateTime? UpdatedAtUtc,
-	Guid UserId
+	Guid UserId,
+	List<ReadTourLogDto> TourLogs
 );
 
 public record UpdateTourDto(
