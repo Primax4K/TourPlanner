@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Domain.Repositories.Interfaces;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
@@ -20,65 +20,35 @@ public class TourController(ITourRepository repository, ILogger<TourController> 
 	[Authorize]
 	[HttpPost]
 	public override async Task<ActionResult<ReadTourDto>> CreateAsync(CreateTourDto entity, CancellationToken ct) {
-		try {
-			Tour toCreate = entity.Adapt<Tour>();
+		Tour toCreate = entity.Adapt<Tour>();
 
-			if (!Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
-				return Unauthorized("Invalid User");
-			
-			toCreate.UserId = userId;
+		if (!TryGetCurrentUserId(out var userId))
+			return Unauthorized("Invalid User");
 
-			return Ok((await repository.CreateAsync(toCreate, ct)).Adapt<ReadTourDto>());
-		}
-		catch (OperationCanceledException) {
-			logger.LogError("Zeitüberschreitung der Anforderungen!");
-			return StatusCode(408);
-		}
-		catch (Exception e) {
-			logger.LogError(e, "Fehler beim Abrufen der Entität!");
-			return Problem("Fehler beim Abrufen der Entität!");
-		}
+		toCreate.UserId = userId;
+
+		return Ok((await repository.CreateAsync(toCreate, ct)).Adapt<ReadTourDto>());
 	}
 
 	[Authorize]
 	[HttpGet("mine")]
 	public async Task<ActionResult<List<ReadTourDto>>> ReadOwnAsync(CancellationToken ct) {
-		try {
-			if (!TryGetCurrentUserId(out var userId))
-				return Unauthorized("Invalid User");
+		if (!TryGetCurrentUserId(out var userId))
+			return Unauthorized("Invalid User");
 
-			List<Tour> results = await repository.ReadAsync(t => t.UserId == userId, ct);
+		List<Tour> results = await repository.ReadAsync(t => t.UserId == userId, ct);
 
-			return Ok(results.Adapt<List<ReadTourDto>>());
-		}
-		catch (OperationCanceledException) {
-			logger.LogError("Zeitüberschreitung der Anforderungen!");
-			return StatusCode(408);
-		}
-		catch (Exception e) {
-			logger.LogError(e, "Fehler beim Abrufen der Entität!");
-			return Problem("Fehler beim Abrufen der Entität!");
-		}
+		return Ok(results.Adapt<List<ReadTourDto>>());
 	}
 
 	[Authorize]
 	[HttpGet("search")]
 	public async Task<ActionResult<List<ReadTourDto>>> SearchAsync([FromQuery] string q, CancellationToken ct) {
-		try {
-			if (string.IsNullOrWhiteSpace(q))
-				return BadRequest("Query must not be empty.");
+		if (string.IsNullOrWhiteSpace(q))
+			return BadRequest("Query must not be empty.");
 
-			List<Tour> results = await repository.SearchAsync(q, ct);
+		List<Tour> results = await repository.SearchAsync(q, ct);
 
-			return Ok(results.Where(IsOwner).Adapt<List<ReadTourDto>>());
-		}
-		catch (OperationCanceledException) {
-			logger.LogError("Zeitüberschreitung der Anforderungen!");
-			return StatusCode(408);
-		}
-		catch (Exception e) {
-			logger.LogError(e, "Fehler beim Abrufen der Entität!");
-			return Problem("Fehler beim Abrufen der Entität!");
-		}
+		return Ok(results.Where(IsOwner).Adapt<List<ReadTourDto>>());
 	}
 }

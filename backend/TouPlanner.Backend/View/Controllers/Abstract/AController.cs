@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Domain.Repositories.Interfaces;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +14,6 @@ public abstract class AController<TEntity, TCreateEntityDto, TReadEntityDto, TUp
 	where TUpdateEntityDto : class
 	where TReadEntityDto : class {
 
-
 	protected virtual bool IsOwner(TEntity entity) => true;
 
 	protected bool TryGetCurrentUserId(out Guid userId) =>
@@ -23,107 +22,66 @@ public abstract class AController<TEntity, TCreateEntityDto, TReadEntityDto, TUp
 	[Authorize]
 	[HttpGet("{id}")]
 	public virtual async Task<ActionResult<TReadEntityDto>> ReadAsync(Guid id, CancellationToken ct) {
-		try {
-			TEntity? data = await repository.ReadAsync(id, ct);
+		TEntity? data = await repository.ReadAsync(id, ct);
 
-			if (data is null) {
-				logger.LogInformation($"Invalid Request: Entity not present - {id}");
-				return NotFound();
-			}
+		if (data is null) {
+			logger.LogInformation("Invalid Request: Entity not present - {Id}", id);
+			return NotFound();
+		}
 
-			if (!IsOwner(data)) {
-				logger.LogInformation($"Invalid Request: Entity not owned by current user - {id}");
-				return NotFound();
-			}
+		if (!IsOwner(data)) {
+			logger.LogInformation("Invalid Request: Entity not owned by current user - {Id}", id);
+			return NotFound();
+		}
 
-			logger.LogInformation($"Sending Entity: {id}");
-			return Ok(data.Adapt<TReadEntityDto>());
-		}
-		catch (OperationCanceledException) {
-			logger.LogError("Zeitüberschreitung der Anforderungen!");
-			return StatusCode(408);
-		}
-		catch (Exception e) {
-			logger.LogError(e, "Fehler beim Abrufen der Entität!");
-			return Problem("Fehler beim Abrufen der Entität!");
-		}
+		logger.LogInformation("Sending Entity: {Id}", id);
+		return Ok(data.Adapt<TReadEntityDto>());
 	}
 
 	[Authorize]
 	[HttpPut("{id}")]
 	public virtual async Task<ActionResult<TReadEntityDto>> UpdateAsync(Guid id, TUpdateEntityDto record, CancellationToken ct) {
-		try {
-			TEntity? data = await repository.ReadAsync(id, ct);
+		TEntity? data = await repository.ReadAsync(id, ct);
 
-			if (data is null) {
-				logger.LogInformation($"Invalid Request: Entity not present - {id}");
-				return NotFound();
-			}
-
-			if (!IsOwner(data)) {
-				logger.LogInformation($"Invalid Request: Entity not owned by current user - {id}");
-				return NotFound();
-			}
-
-			record.Adapt(data);
-			await repository.UpdateAsync(data, ct);
-			logger.LogInformation($"Updated Entity: {id}");
-
-			return Ok(data.Adapt<TReadEntityDto>());
+		if (data is null) {
+			logger.LogInformation("Invalid Request: Entity not present - {Id}", id);
+			return NotFound();
 		}
-		catch (OperationCanceledException) {
-			logger.LogError("Zeitüberschreitung der Anforderungen!");
-			return StatusCode(408);
+
+		if (!IsOwner(data)) {
+			logger.LogInformation("Invalid Request: Entity not owned by current user - {Id}", id);
+			return NotFound();
 		}
-		catch (Exception e) {
-			logger.LogError(e, "Fehler beim Abrufen der Entität!");
-			return Problem("Fehler beim Abrufen der Entität!");
-		}
+
+		record.Adapt(data);
+		await repository.UpdateAsync(data, ct);
+		logger.LogInformation("Updated Entity: {Id}", id);
+
+		return Ok(data.Adapt<TReadEntityDto>());
 	}
 
 	[Authorize]
 	[HttpDelete("{id}")]
 	public virtual async Task<ActionResult> DeleteAsync(Guid id, CancellationToken ct) {
-		try {
-			TEntity? data = await repository.ReadAsync(id, ct);
+		TEntity? data = await repository.ReadAsync(id, ct);
 
-			if (data is null) {
-				return NotFound();
-			}
+		if (data is null)
+			return NotFound();
 
-			if (!IsOwner(data)) {
-				logger.LogInformation($"Invalid Request: Entity not owned by current user - {id}");
-				return NotFound();
-			}
-
-			await repository.DeleteAsync(data, ct);
-			logger.LogInformation($"Deleted Entity: {id}");
-
-			return NoContent();
+		if (!IsOwner(data)) {
+			logger.LogInformation("Invalid Request: Entity not owned by current user - {Id}", id);
+			return NotFound();
 		}
-		catch (OperationCanceledException) {
-			logger.LogError("Zeitüberschreitung der Anforderungen!");
-			return StatusCode(408);
-		}
-		catch (Exception e) {
-			logger.LogError(e, "Fehler beim Abrufen der Entität!");
-			return Problem("Fehler beim Abrufen der Entität!");
-		}
+
+		await repository.DeleteAsync(data, ct);
+		logger.LogInformation("Deleted Entity: {Id}", id);
+
+		return NoContent();
 	}
 
 	[Authorize]
 	[HttpPost]
 	public virtual async Task<ActionResult<TReadEntityDto>> CreateAsync(TCreateEntityDto entity, CancellationToken ct) {
-		try {
-			return Ok((await repository.CreateAsync(entity.Adapt<TEntity>(), ct)).Adapt<TReadEntityDto>());
-		}
-		catch (OperationCanceledException) {
-			logger.LogError("Zeitüberschreitung der Anforderungen!");
-			return StatusCode(408);
-		}
-		catch (Exception e) {
-			logger.LogError(e, "Fehler beim Abrufen der Entität!");
-			return Problem("Fehler beim Abrufen der Entität!");
-		}
+		return Ok((await repository.CreateAsync(entity.Adapt<TEntity>(), ct)).Adapt<TReadEntityDto>());
 	}
 }
