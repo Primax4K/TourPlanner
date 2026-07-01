@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Domain.Repositories.Interfaces;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
@@ -6,12 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Model.Entities;
 using View.Controllers.Abstract;
 using View.DTOs;
+using View.Services;
 
 namespace View.Controllers.Entities;
 
 [ApiController]
 [Route("api/tour")]
-public class TourController(ITourRepository repository, ILogger<TourController> logger)
+public class TourController(ITourRepository repository, IRouteService routeService, ILogger<TourController> logger)
 	: AController<Tour, CreateTourDto, ReadTourDto, UpdateTourDto>(repository, logger) {
 
 	protected override bool IsOwner(Tour entity) =>
@@ -20,65 +21,73 @@ public class TourController(ITourRepository repository, ILogger<TourController> 
 	[Authorize]
 	[HttpPost]
 	public override async Task<ActionResult<ReadTourDto>> CreateAsync(CreateTourDto entity, CancellationToken ct) {
-		try {
-			Tour toCreate = entity.Adapt<Tour>();
+		if (!TryGetCurrentUserId(out var userId))
+			return Unauthorized("Invalid User");
 
-			if (!Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
-				return Unauthorized("Invalid User");
-			
-			toCreate.UserId = userId;
+		Tour toCreate = entity.Adapt<Tour>();
+		toCreate.UserId = userId;
 
-			return Ok((await repository.CreateAsync(toCreate, ct)).Adapt<ReadTourDto>());
-		}
-		catch (OperationCanceledException) {
-			logger.LogError("Zeitüberschreitung der Anforderungen!");
-			return StatusCode(408);
-		}
-		catch (Exception e) {
-			logger.LogError(e, "Fehler beim Abrufen der Entität!");
-			return Problem("Fehler beim Abrufen der Entität!");
-		}
+		var route = await routeService.GetRouteAsync(
+			toCreate.TransportType,
+			toCreate.FromLongitude, toCreate.FromLatitude,
+			toCreate.ToLongitude, toCreate.ToLatitude,
+			ct);
+
+		toCreate.Distance = route.DistanceKm;
+		toCreate.Duration = route.DurationMinutes;
+		toCreate.Coordinates = route.EncodedGeometry;
+
+		return Ok((await repository.CreateAsync(toCreate, ct)).Adapt<ReadTourDto>());
+	}
+
+	[Authorize]
+	[HttpPut("{id}")]
+	public override async Task<ActionResult<ReadTourDto>> UpdateAsync(Guid id, UpdateTourDto record, CancellationToken ct) {
+		Tour? data = await repository.ReadAsync(id, ct);
+
+		if (data is null)
+			return NotFound();
+
+		if (!IsOwner(data))
+			return NotFound();
+
+		record.Adapt(data);
+
+		var route = await routeService.GetRouteAsync(
+			data.TransportType,
+			data.FromLongitude, data.FromLatitude,
+			data.ToLongitude, data.ToLatitude,
+			ct);
+
+		data.Distance = route.DistanceKm;
+		data.Duration = route.DurationMinutes;
+		data.Coordinates = route.EncodedGeometry;
+		data.UpdatedAtUtc = DateTime.UtcNow;
+
+		await repository.UpdateAsync(data, ct);
+
+		return Ok(data.Adapt<ReadTourDto>());
 	}
 
 	[Authorize]
 	[HttpGet("mine")]
 	public async Task<ActionResult<List<ReadTourDto>>> ReadOwnAsync(CancellationToken ct) {
-		try {
-			if (!TryGetCurrentUserId(out var userId))
-				return Unauthorized("Invalid User");
+		if (!TryGetCurrentUserId(out var userId))
+			return Unauthorized("Invalid User");
 
-			List<Tour> results = await repository.ReadAsync(t => t.UserId == userId, ct);
+		List<Tour> results = await repository.ReadByUserWithLogsAsync(userId, ct);
 
-			return Ok(results.Adapt<List<ReadTourDto>>());
-		}
-		catch (OperationCanceledException) {
-			logger.LogError("Zeitüberschreitung der Anforderungen!");
-			return StatusCode(408);
-		}
-		catch (Exception e) {
-			logger.LogError(e, "Fehler beim Abrufen der Entität!");
-			return Problem("Fehler beim Abrufen der Entität!");
-		}
+		return Ok(results.Adapt<List<ReadTourDto>>());
 	}
 
 	[Authorize]
 	[HttpGet("search")]
 	public async Task<ActionResult<List<ReadTourDto>>> SearchAsync([FromQuery] string q, CancellationToken ct) {
-		try {
-			if (string.IsNullOrWhiteSpace(q))
-				return BadRequest("Query must not be empty.");
+		if (string.IsNullOrWhiteSpace(q))
+			return BadRequest("Query must not be empty.");
 
-			List<Tour> results = await repository.SearchAsync(q, ct);
+		List<Tour> results = await repository.SearchAsync(q, ct);
 
-			return Ok(results.Where(IsOwner).Adapt<List<ReadTourDto>>());
-		}
-		catch (OperationCanceledException) {
-			logger.LogError("Zeitüberschreitung der Anforderungen!");
-			return StatusCode(408);
-		}
-		catch (Exception e) {
-			logger.LogError(e, "Fehler beim Abrufen der Entität!");
-			return Problem("Fehler beim Abrufen der Entität!");
-		}
+		return Ok(results.Where(IsOwner).Adapt<List<ReadTourDto>>());
 	}
 }

@@ -7,6 +7,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Model.Configuration;
 using View.Auth;
+using View.Exceptions;
+using View.Seeding;
+using View.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +35,9 @@ builder.Services.AddCors(options =>
 });
 
 
+builder.Services.AddHttpClient<IRouteService, RouteService>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -97,11 +103,14 @@ if (app.Environment.IsDevelopment()) {
 }
 
 app.UseCors("LocalDev");
+app.UseExceptionHandler();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+await DataSeeder.SeedAsync(app.Services);
 
 app.Run();
