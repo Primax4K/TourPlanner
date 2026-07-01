@@ -3,7 +3,7 @@ import { TourList } from './components/tour-list/tour-list';
 import { TourMap } from './components/tour-map/tour-map';
 import { TourToolbar } from './components/tour-toolbar/tour-toolbar';
 import { Header } from './components/header/header';
-import { Login } from './components/login/login';
+import { LoginComp } from './components/login/login';
 import { OverlayService } from './services/OverlayService';
 import { Register } from './components/register/register';
 import { CreateTour } from './components/create-tour/create-tour';
@@ -16,7 +16,7 @@ import { CreateLog } from './components/create-log/create-log';
 
 @Component({
   selector: 'app-root',
-  imports: [TourList, Header, TourMap, TourToolbar, Login, Register, CreateTour, EditTour, TourLogList, EditLog, CreateLog],
+  imports: [TourList, Header, TourMap, TourToolbar, LoginComp, Register, CreateTour, EditTour, TourLogList, EditLog, CreateLog],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

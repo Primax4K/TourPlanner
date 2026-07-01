@@ -10,11 +10,9 @@
         <input name="transport" id="bicycle" (change)="transport.set('bicycle')" type="radio">
         <label class="ml-2 mr-1" for="walking">Walking</label>
         <input name="transport" id="walking" (change)="transport.set('walking')" type="radio">
-        <label class="ml-2 mr-1" for="hiking">Hiking</label>
-        <input name="transport" id="hiking" (change)="transport.set('hiking')" type="radio">
     </div>
     <label class="mt-2">Description: </label>
-    <input class="border p-1" type="text">
+    <input class="border p-1" (input)="description.set($event.target.value)" type="text">
     <label class="mt-2">Starting Point Longitude: </label>
     <input class="border p-1" type="text" value="{{tour().from_long}}" step="0.0001" 
            (input)="start_long.set(parseFloatValue($event.target.value))">

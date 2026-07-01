@@ -25,11 +25,50 @@ export class Tour {
     return this.tourLogs.length;
   }
 }
+
+
+export function createTourDto(tour: Tour) {
+  return {
+    name: tour.name,
+    fromLongitude: tour.from_long,
+    fromLatitude: tour.from_lat,
+    toLongitude: tour.to_long,
+    toLatitude: tour.to_lat,
+    description: tour.description,
+    transportType: tour.transport
+  };
+}
+export function editTourDto(tour: Tour) {
+  return {
+    id: tour.id,
+    name: tour.name,
+    fromLongitude: tour.from_long,
+    fromLatitude: tour.from_lat,
+    toLongitude: tour.to_long,
+    toLatitude: tour.to_lat,
+    description: tour.description,
+    transportType: tour.transport
+  };
+}
+export function receiveTourDto(tour: any) {
+  return new Tour(
+    tour.id,
+    tour.name,
+    tour.fromLongitude,
+    tour.fromLatitude,
+    tour.toLongitude,
+    tour.toLatitude,
+    tour.routeInformation,
+    [],
+    tour.description,
+    tour.transportType
+  );
+}
+
 export enum TransportType{
   Car=0,
-  Bicycle,
-  Walking,
-  Hiking
+  Cycling=0,
+  Walking=2
 }
 export interface RouteData {
   distance: number;

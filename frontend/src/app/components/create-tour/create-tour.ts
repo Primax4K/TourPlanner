@@ -23,10 +23,8 @@ export class CreateTour {
             transportType=TransportType.Car;
             break;
           case 'bicycle':
-            transportType=TransportType.Bicycle;
+            transportType=TransportType.Cycling;
             break;
-          case 'hiking':
-            transportType=TransportType.Hiking;
             break;
           case 'walking':
             transportType=TransportType.Walking;

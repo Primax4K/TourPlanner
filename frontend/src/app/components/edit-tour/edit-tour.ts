@@ -31,10 +31,7 @@ export class EditTour {
         transportType=TransportType.Car;
         break;
       case 'bicycle':
-        transportType=TransportType.Bicycle;
-        break;
-      case 'hiking':
-        transportType=TransportType.Hiking;
+        transportType=TransportType.Cycling;
         break;
       case 'walking':
         transportType=TransportType.Walking;

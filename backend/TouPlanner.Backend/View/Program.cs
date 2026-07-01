@@ -20,6 +20,17 @@ builder.Services.AddTransient<IApplicationUserRepository, ApplicationUserReposit
 builder.Services.AddTransient<ITourRepository, TourRepository>();
 builder.Services.AddTransient<ITourLogRepository, TourLogRepository>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("LocalDev", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -85,6 +96,7 @@ if (app.Environment.IsDevelopment()) {
 	app.UseSwaggerUI();
 }
 
+app.UseCors("LocalDev");
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

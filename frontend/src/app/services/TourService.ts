@@ -1,17 +1,17 @@
 import { Injectable, signal } from '@angular/core';
-import { RouteData, Tour, TourLog, TransportType } from '../model/model';
+import { RouteData, createTourDto, Tour, TourLog, TransportType, receiveTourDto } from '../model/model';
 import * as polyline from '@mapbox/polyline';
+import { LoginService } from './LoginService';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TourService {
-  constructor(){
-    const jwt_token="test"
-    if(jwt_token){
-      this.fetchAllTours(jwt_token)
-    }
+  constructor(logService: LoginService){
+    this.logService=logService; 
+    this.fetchAllTours()
   }
+  logService:LoginService;
   tours = signal<Tour[]>([]);
   tourLogView = signal<boolean>(false)
   selectedTourLog = signal<TourLog | null>(null);
@@ -50,12 +50,7 @@ export class TourService {
     this.selectTour(tourId);
     return Promise.resolve();
   }
-  async createTour(newTour:Tour){
-    const routeInfo=await this.getRouteForTour(newTour.from_lat, newTour.from_long, newTour.to_lat, newTour.to_long);
-    this.tours.update(tours=>[...tours,new Tour(this.newIdCounter, newTour.name, newTour.from_long, newTour.from_lat, 
-      newTour.to_long, newTour.to_lat, routeInfo, [], newTour.description)]);
-    return Promise.resolve();
-  }
+
   async editTour(editedTour:Tour){
     const routeInfo=await this.getRouteForTour(
       editedTour.from_lat, editedTour.from_long, editedTour.to_lat, editedTour.to_long);
@@ -90,19 +85,69 @@ export class TourService {
 
     this.selectTour(tour_id);
   }
-  async fetchAllTours(jwt_token:string){
-    await this.createTour(new Tour(-1,"Wien Tour 1",16.3738,48.21,16.358,48.2082,null, [], "schöne tour nach westen", TransportType.Car));
-    await this.createTourLog(this.newIdCounter, new TourLog(1, "Wow TourLog", new Date("2026-04-04T10:30:00Z"), 2, 1800, 40, 4,"war cool"));
-    await this.createTourLog(this.newIdCounter, new TourLog(2, "Wow2 TourLog", new Date("2026-04-06T10:30:00Z"), 2, 2000, 40, 5,"es hat geregnet"));
-    await this.createTourLog(this.newIdCounter, new TourLog(3, "Wow3 TourLog", new Date("2026-04-07T10:30:00Z"), 2, 2100, 35, 3,"hagel ew"));
-    this.newIdCounter++;
-    await this.createTour(new Tour(-1,"Wien Tour 2",16.3738,48.2082,16.3938,48.2082,null, [], "schöne tour nach osten", TransportType.Car));
-    this.newIdCounter++;
-  }
-  async deleteTour(tourId:number){
-    this.tours.update(tours=>
-      tours.filter(t => t.id !== tourId)
+  async fetchAllTours(){
+    const token=this.logService.getToken()
+    if(token==null) return;
+
+    
+    const response = await fetch("https://localhost:7140/api/tour/mine", {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    const data = await response.json();
+    const fetchedTours: Tour[] = data.map((tour: any) =>
+      new Tour(
+        tour.id,
+        tour.name,
+        tour.fromLongitude,
+        tour.fromLatitude,
+        tour.toLongitude,
+        tour.toLatitude,
+        tour.routeInformation,
+        [],
+        tour.description,
+        tour.transportType
+      )
     );
+    this.tours.set(fetchedTours)
+  }
+  async createTour(newTour:Tour){
+    const token=this.logService.getToken()
+    if(token==null) return;
+
+    const response = await fetch(`https://localhost:7140/api/tour/`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(createTourDto(newTour))
+    });
+    const data = await response.json();
+    const fetchedTour: Tour = receiveTourDto(data);
+    
+    this.tours.update(tours=>[...tours,fetchedTour]);
+  }
+
+  async deleteTour(tourId:number){
+    const token=this.logService.getToken()
+    if(token==null) return;
+
+    const response = await fetch(`https://localhost:7140/api/tour/${tourId}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(!response.ok) return;
+  
+    this.tours.update(tours=>
+        tours.filter(t => t.id !== tourId)
+      );
   }
   private async getRouteForTour(
     from_long: number, from_lat: number, 
