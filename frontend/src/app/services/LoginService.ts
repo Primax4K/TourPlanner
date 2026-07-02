@@ -1,4 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
+import { environment } from '../environment';
 
 @Injectable({ providedIn: 'root' })
 export class LoginService {
@@ -47,7 +48,7 @@ export class LoginService {
     }
 
     async Register(username:string, email:string, password:string){
-        const url="https://localhost:7140/api/auth/register";
+        const url=`${environment.apiUrl}/api/auth/register`;
 
         const response = await fetch(url, {
             method: 'POST',
@@ -65,7 +66,7 @@ export class LoginService {
     }
 
     async Login(usernameOrEmail:string, password:string){
-        const url="https://localhost:7140/api/auth/login";
+        const url=`${environment.apiUrl}/api/auth/login`;
 
         const response = await fetch(url, {
             method: 'POST',

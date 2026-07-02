@@ -2,6 +2,7 @@ import { effect, Injectable, signal } from '@angular/core';
 import { RouteData, createTourDto, Tour, TourLog, TransportType, receiveTourDto, editTourDto, createTourLogDto, receiveTourLogDto } from '../model/model';
 import * as polyline from '@mapbox/polyline';
 import { LoginService } from './LoginService';
+import { environment } from '../environment';
 
 @Injectable({
   providedIn: 'root'
@@ -41,7 +42,7 @@ export class TourService {
     if(token==null) return;
 
     
-    const response = await fetch("https://localhost:7140/api/tour/mine", {
+    const response = await fetch(`${environment.apiUrl}/api/tour/mine`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token}`
@@ -57,7 +58,7 @@ export class TourService {
     if(token==null) return;
 
     
-    const response = await fetch(`https://localhost:7140/api/tour/search?q=${""+encodeURIComponent(query)}`, {
+    const response = await fetch(`${environment.apiUrl}/api/tour/search?q=${""+encodeURIComponent(query)}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token}`
@@ -72,7 +73,7 @@ export class TourService {
     const token=this.logService.getToken()
     if(token==null) return;
 
-    const response = await fetch(`https://localhost:7140/api/tour/`, {
+    const response = await fetch(`${environment.apiUrl}/api/tour/`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${token}`,
@@ -86,11 +87,46 @@ export class TourService {
     this.tours.update(tours=>[...tours,fetchedTour]);
   }
 
+  async importTour(json:string){
+    const token=this.logService.getToken()
+    if(token==null) return;
+
+    const response = await fetch(`${environment.apiUrl}/api/tour/`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: json
+    });
+    const data = await response.json();
+    const fetchedTour: Tour = receiveTourDto(data);
+    
+    this.tours.update(tours=>[...tours,fetchedTour]);
+  }
+  async exportTour(tour:Tour){
+    const data = createTourDto(tour);
+
+    const json = JSON.stringify(data, null, 2);
+
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `tour-${tour.id ?? "export"}.json`;
+
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    URL.revokeObjectURL(url);
+  }
   async deleteTour(tourId:string){
     const token=this.logService.getToken()
     if(token==null) return;
 
-    const response = await fetch(`https://localhost:7140/api/tour/${tourId}`, {
+    const response = await fetch(`${environment.apiUrl}/api/tour/${tourId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -109,7 +145,7 @@ export class TourService {
     const token=this.logService.getToken()
     if(token==null) return;
     console.log(editedTour.id)
-    const response = await fetch(`https://localhost:7140/api/tour/${editedTour.id}`, {
+    const response = await fetch(`${environment.apiUrl}/api/tour/${editedTour.id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -134,7 +170,7 @@ export class TourService {
     const token=this.logService.getToken()
     if(token==null) return;
 
-    const response = await fetch(`https://localhost:7140/api/tourlog`, {
+    const response = await fetch(`${environment.apiUrl}/api/tourlog`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -170,7 +206,7 @@ export class TourService {
     if(token==null) return;
 
     
-    const response = await fetch(`https://localhost:7140/api/tourlog/search?q=${encodeURIComponent(query)}`, {
+    const response = await fetch(`${environment.apiUrl}/api/tourlog/search?q=${encodeURIComponent(query)}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token}`
@@ -192,7 +228,7 @@ export class TourService {
     if(token==null) return;
 
     console.log(tourId);
-    const response = await fetch(`https://localhost:7140/api/tourlog/${editedTourLog.id}`, {
+    const response = await fetch(`${environment.apiUrl}/api/tourlog/${editedTourLog.id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -222,7 +258,7 @@ export class TourService {
     if(token==null) return;
 
     console.log(tourId);
-    const response = await fetch(`https://localhost:7140/api/tourlog/${tourLogId}`, {
+    const response = await fetch(`${environment.apiUrl}/api/tourlog/${tourLogId}`, {
           method: "DELETE",
           headers: {
             "Authorization": `Bearer ${token}`
