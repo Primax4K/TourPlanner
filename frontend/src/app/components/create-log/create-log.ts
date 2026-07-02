@@ -13,7 +13,6 @@ export class CreateLog {
   constructor(public tourService:TourService, public overlay:OverlayService){}
     tour=input.required<Tour>();
     
-    tourName = signal('');
     difficulty = signal<number | null>(null);
     rating = signal<number | null>(null);
     comment = signal('');
@@ -27,8 +26,8 @@ export class CreateLog {
       const timeOfTour=new Date(timeOfTourString);
       timeOfTour.setMonth(timeOfTour.getMonth()+1);
       
-      if(this.tourName()!==""&&this.difficulty()&&this.rating()&&this.time()&&this.distance()){
-        const newTourLog=new TourLog(-1, this.tourName(), timeOfTour, this.difficulty()??3, this.distance()??0,
+      if(this.difficulty()&&this.rating()&&this.time()&&this.distance()){
+        const newTourLog=new TourLog("", timeOfTour, this.difficulty()??3, this.distance()??0,
         this.time()??0, this.rating()??3, this.comment());
         this.tourService.createTourLog(this.tour().id, newTourLog);
         this.overlay.close();

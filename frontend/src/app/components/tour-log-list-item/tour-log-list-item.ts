@@ -17,7 +17,7 @@ export class TourLogListItem {
   });
   toggleSelection(){
     if(this.isSelected()){
-      this.tourService.selectTourLog(-1);
+      this.tourService.selectTourLog("");
     }
     else{
       this.tourService.selectTourLog(this.tourLog().id)

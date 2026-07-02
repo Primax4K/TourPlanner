@@ -1,6 +1,9 @@
 <div class="bg-indigo-800 text-amber-50 px-10 py-2 mt-5 flex gap-4">
     @if(!tourService.tourLogView()){    
-        <button (click)="create_tour()">Create Tour</button>
+        <button (click)="create_tour()" 
+        [disabled]="!loginService.isLoggedIn()"  class="disabled:text-gray-200
+        disabled:cursor-not-allowed
+        disabled:opacity-60">Create Tour</button>
         <button (click)="edit_tour()" 
         [disabled]="!tourService.selectedTour()"
         class="disabled:text-gray-200
@@ -12,7 +15,8 @@
         disabled:cursor-not-allowed
         disabled:opacity-60">Delete Tour</button>
     }@else{
-        <button (click)="create_tourLog()">Create Log</button>
+        <button (click)="create_tourLog()"
+        [disabled]="!loginService.isLoggedIn()">Create Log</button>
         <button (click)="edit_tourLog()" 
         [disabled]="!tourService.selectedTourLog()"
         class="disabled:text-gray-200

@@ -7,11 +7,19 @@ export class LoginService {
     private tokenSignal = signal<string | null>(
         sessionStorage.getItem('token')
     );
-    
+
     isLoggedIn = computed(() => this.tokenSignal()!=null);
+    username = computed(() => {
+        const token = this.tokenSignal();
+        if (!token) return null;
+
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.unique_name;
+    });
 
     setToken(token: string) {
         sessionStorage.setItem('token', token);
+        console.log(token);
         this.tokenSignal.set(token);
     }
 

@@ -16,7 +16,6 @@ export class EditLog implements OnInit{
   
   difficulty = signal<number | null>(null);
   rating = signal<number | null>(null);
-  tourName = signal('');
   timeString = signal('')
   dateString = signal('')
   comment = signal('');
@@ -46,7 +45,7 @@ export class EditLog implements OnInit{
     console.log(timeOfTourString);
     const timeOfTour=new Date(timeOfTourString);
     timeOfTour.setMonth(timeOfTour.getMonth()+1);
-    const editLog=new TourLog(this.tourLog().id, this.tourName()==""?this.tourLog().name:this.tourName(), 
+    const editLog=new TourLog(this.tourLog().id, 
     timeOfTour, this.difficulty()??this.tourLog().difficulty, this.distance()??this.tourLog().totalDistanceInM,
      this.time()??this.tourLog().totalTimeInM, this.rating()??this.tourLog().rating, this.comment()==""?this.tourLog().comment: this.comment())
 

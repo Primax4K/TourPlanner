@@ -7,7 +7,8 @@
         <span (click)="toggleSelection()" class="px-2 hover:text-indigo-50">⛛</span>
     }
     <span (click)="toggleSelection()" class="grow">{{tour().name}}</span>
-    <span (click)="toggleSelection()" class="text-gray-500 px-2">~{{math.floor((tour().routeInfo?.duration ?? 0) / 60)}} mins</span>
+    <span (click)="toggleSelection()" class="text-gray-500 px-2">~{{tour().routeInfo?.distance}} km</span>
+    <span (click)="toggleSelection()" class="text-gray-500 px-2">~{{tour().routeInfo?.duration}} mins</span>
     
     <button class="border rounded-md px-1 hover:bg-indigo-50" (click)="activateTourLogView()">{{tour().tourLogs.length}} logs</button>
 </div>

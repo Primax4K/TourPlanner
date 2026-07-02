@@ -14,6 +14,7 @@ export class TourLogList {
   }
   tour=input.required<Tour>();
   back(){
-    this.tourService.tourLogView.update(val=>val=false)
+    this.tourService.tourLogView.update(val=>val=false);
+    this.tourService.fetchAllTours();
   }
 }

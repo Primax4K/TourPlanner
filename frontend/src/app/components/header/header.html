@@ -1,12 +1,24 @@
 <header class="bg-indigo-900 px-4 py-5">
     <nav class="text-amber-50 flex gap-5 justify-between">
         <div class="w-2/3 flex gap-4">
+        @if (tourService.tourLogView()) {
+            <span>Find Tour Log:</span>
+            <input (input)="searchQuery.set($event.target.value)" class="border-amber-50 rounded-2xl border flex-6 px-4 py-0.5 outline-0">
+            <button (click)="searchLog()" class="border-amber-50 rounded-2xl border px-4 py-1">Search</button>
+        }@else {            
             <span>Find Tour:</span>
-            <input class="border-amber-50 rounded-2xl border flex-6 px-4 py-0.5 outline-0">
+            <input (input)="searchQuery.set($event.target.value)" class="border-amber-50 rounded-2xl border flex-6 px-4 py-0.5 outline-0">
+            <button (click)="search()" class="border-amber-50 rounded-2xl border px-4 py-1">Search</button>
+        }
         </div>
         <div class="flex gap-5">
-            <span (click)="login()">Login</span>
-            <span (click)="register()">Register</span>
+            @if (loginService.isLoggedIn()) {
+                <span>{{ loginService.username() }}</span>       
+                <span (click)="logout()">Logout</span>          
+            }@else{
+                <span (click)="login()">Login</span>
+                <span (click)="register()">Register</span>
+            }
         </div>
     </nav>
 </header>   

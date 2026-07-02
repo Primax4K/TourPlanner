@@ -1,6 +1,4 @@
 <div class="flex flex-col text-center mb-4"><label class="mt-2">Tour Name: </label>
-    <input class="border p-1" type="text" required 
-           (input)="tourName.set($event.target.value)">
     <label class="mt-2">difficulty: </label>
     <div>
         <label class="ml-2 mr-1" for="d1">1</label>
@@ -39,5 +37,5 @@
     type="number">
     <label class="mt-2">Time in m: </label>
     <input required class="border p-1" type="number" (input)="time.set(parseFloatValue($event.target.value))">
-    <button class="mt-4 border p-2" (click)="submit()">Ändern</button>
+    <button class="mt-4 border p-2" (click)="submit()">Create</button>
 </div>

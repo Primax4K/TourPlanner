@@ -9,7 +9,8 @@ import { TourService } from '../../services/TourService';
   styleUrl: './tour-list-item.css',
 })
 export class TourListItem {
-  constructor(public tourService: TourService) {}
+  constructor(public tourService: TourService) {
+  }
   math=Math
   tour = input.required<Tour>()
   showDetail=signal(false)  
@@ -26,7 +27,7 @@ export class TourListItem {
   }
   toggleSelection(){
     if(this.isSelected()){
-      this.tourService.selectTour(-1);
+      this.tourService.selectTour("");
     }
     else{
       this.tourService.selectTour(this.tour().id)

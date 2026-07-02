@@ -42,7 +42,7 @@
 
       @if (overlay.type() === 'deleteLog' && tourService.selectedTour() && tourService.selectedTourLog()) {
         <div class="text-center">
-          <p class="mb-5">{{ tourService.selectedTourLog()!.name }} wirklich löschen?</p>
+          <p class="mb-5">Diesen Tourlog wirklich löschen?</p>
           <button (click)="overlay.close(); tourService.deleteTourLog(tourService.selectedTour()!.id, tourService.selectedTourLog()!.id)" class="mx-5">Ja</button>
           <button (click)="overlay.close()" class="mx-5">Abbrechen</button>
         </div>

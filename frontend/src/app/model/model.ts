@@ -1,6 +1,8 @@
+import polyline from "@mapbox/polyline";
+
 export class Tour {
   constructor(
-    public id: number,
+    public id: string,
     public name: string,
     public from_long: number,
     public from_lat: number,
@@ -38,6 +40,17 @@ export function createTourDto(tour: Tour) {
     transportType: tour.transport
   };
 }
+export function createTourLogDto(tourId:string,tourLog: TourLog) {
+  return {
+    tourId: tourId,
+    dateTimeUtc: tourLog.timeOfTour.toISOString(),
+    comment: tourLog.comment,
+    difficulty: tourLog.difficulty,
+    totalDistanceKm: tourLog.totalDistanceInM/1000,
+    totalTimeMinutes: tourLog.totalTimeInM,
+    rating: tourLog.rating
+  };
+}
 export function editTourDto(tour: Tour) {
   return {
     id: tour.id,
@@ -50,6 +63,17 @@ export function editTourDto(tour: Tour) {
     transportType: tour.transport
   };
 }
+export function receiveTourLogDto(tourLog:any){
+  return new TourLog(
+          tourLog.id,
+          new Date(tourLog.dateTimeUtc),
+          tourLog.difficulty,
+          tourLog.totalDistanceKm * 1000,
+          tourLog.totalTimeMinutes,
+          tourLog.rating,
+          tourLog.comment
+  );    
+}
 export function receiveTourDto(tour: any) {
   return new Tour(
     tour.id,
@@ -58,8 +82,12 @@ export function receiveTourDto(tour: any) {
     tour.fromLatitude,
     tour.toLongitude,
     tour.toLatitude,
-    tour.routeInformation,
-    [],
+    {
+      distance: tour.distance,
+      duration: tour.duration,
+      coordinates: polyline.decode(tour.coordinates) as [number, number][]
+    },
+    tour.tourLogs?.map(receiveTourLogDto),
     tour.description,
     tour.transportType
   );
@@ -67,7 +95,7 @@ export function receiveTourDto(tour: any) {
 
 export enum TransportType{
   Car=0,
-  Cycling=0,
+  Cycling=1,
   Walking=2
 }
 export interface RouteData {
@@ -84,8 +112,7 @@ export class Login{
 }
 export class TourLog{
   constructor(
-    public id:number,
-    public name:string,
+    public id:string,
     public timeOfTour:Date,
     public difficulty: number,
     public totalDistanceInM: number,

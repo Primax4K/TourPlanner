@@ -34,7 +34,7 @@ export class CreateTour {
         }
         
     if(this.tourName()!==""&&this.start_long()&&this.start_lat()&&this.end_long()&&this.end_lat()){
-      this.tourService.createTour(new Tour(-1,this.tourName(), this.start_long()??0,  this.start_lat()??0, this.end_long()??0, this.end_lat()??0,null,[],this.description(),transportType));
+      this.tourService.createTour(new Tour("",this.tourName(), this.start_long()??0,  this.start_lat()??0, this.end_long()??0, this.end_lat()??0,null,[],this.description(),transportType));
     }
     else{
       alert("invalid fields");
