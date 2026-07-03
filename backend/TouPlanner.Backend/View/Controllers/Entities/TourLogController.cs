@@ -27,7 +27,26 @@ public class TourLogController(ITourLogRepository repository, ITourRepository to
 
 		toCreate.UserId = userId;
 
-		return Ok((await repository.CreateAsync(toCreate, ct)).Adapt<ReadTourLogDto>());
+		var created = await repository.CreateAsync(toCreate, ct);
+		await UpdatePopularityAsync(entity.TourId, ct);
+
+		return Ok(created.Adapt<ReadTourLogDto>());
+	}
+
+	[Authorize]
+	[HttpDelete("{id}")]
+	public override async Task<ActionResult> DeleteAsync(Guid id, CancellationToken ct) {
+		TourLog? log = await repository.ReadAsync(id, ct);
+
+		if (log is null)
+			return NotFound();
+
+		var tourId = log.TourId;
+
+		await repository.DeleteAsync(log, ct);
+		await UpdatePopularityAsync(tourId, ct);
+
+		return NoContent();
 	}
 
 	[Authorize]
@@ -39,5 +58,13 @@ public class TourLogController(ITourLogRepository repository, ITourRepository to
 		List<TourLog> results = await repository.SearchAsync(q, ct);
 
 		return Ok(results.Adapt<List<ReadTourLogDto>>());
+	}
+
+	private async Task UpdatePopularityAsync(Guid tourId, CancellationToken ct) {
+		Tour? tour = await tourRepository.ReadAsync(tourId, ct);
+		if (tour is null) return;
+
+		tour.Popularity = (await repository.ReadAsync(t => t.TourId == tourId, ct)).Count;
+		await tourRepository.UpdateAsync(tour, ct);
 	}
 }
