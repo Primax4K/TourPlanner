@@ -3,17 +3,17 @@ using Model;
 namespace View.DTOs;
 
 public record CreateTourDto(
-	string Name,
-	string? Description,
-	double FromLongitude,
-	double FromLatitude,
-	double ToLongitude,
-	double ToLatitude,
-	TransportType TransportType,
+	[Required][MaxLength(150)] string Name,
+	[MaxLength(2000)] string? Description,
+	[Range(-180.0, 180.0)] double FromLongitude,
+	[Range(-90.0, 90.0)] double FromLatitude,
+	[Range(-180.0, 180.0)] double ToLongitude,
+	[Range(-90.0, 90.0)] double ToLatitude,
+	[EnumDataType(typeof(TransportType))] TransportType TransportType,
 	double Distance,
 	int Duration,
 	string? Coordinates,
-	double ChildFriendliness
+	[Range(0.0, 5.0)] double ChildFriendliness
 );
 
 public record ReadTourDto(
@@ -37,15 +37,15 @@ public record ReadTourDto(
 );
 
 public record UpdateTourDto(
-	string Name,
-	string? Description,
-	double FromLongitude,
-	double FromLatitude,
-	double ToLongitude,
-	double ToLatitude,
-	TransportType TransportType,
+	[Required][MaxLength(150)] string Name,
+	[MaxLength(2000)] string? Description,
+	[Range(-180.0, 180.0)] double FromLongitude,
+	[Range(-90.0, 90.0)] double FromLatitude,
+	[Range(-180.0, 180.0)] double ToLongitude,
+	[Range(-90.0, 90.0)] double ToLatitude,
+	[EnumDataType(typeof(TransportType))] TransportType TransportType,
 	double Distance,
 	int Duration,
 	string? Coordinates,
-	double ChildFriendliness
+	[Range(0.0, 5.0)] double ChildFriendliness
 );
