@@ -83,7 +83,9 @@ public class TourController(ITourRepository repository, IRouteService routeServi
         logger.LogInformation("Updated Tour {TourId} ({DistanceKm} km, {DurationMin} min)", id, route.DistanceKm,
             route.DurationMinutes);
 
-        return Ok(data.Adapt<ReadTourDto>());
+        // Re-read with logs so the response matches the "mine" endpoint (UpdateAsync clears the change tracker).
+        var updated = await repository.ReadWithLogsAsync(id, ct);
+        return Ok(updated!.Adapt<ReadTourDto>());
     }
 
     [Authorize]
