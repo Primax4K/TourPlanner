@@ -10,59 +10,74 @@ namespace View.Controllers.Entities;
 
 [ApiController]
 [Route("api/tourlog")]
-public class TourLogController(ITourLogRepository repository, ITourRepository tourRepository, ILogger<TourLogController> logger)
-	: AController<TourLog, CreateTourLogDto, ReadTourLogDto, UpdateTourLogDto>(repository, logger) {
+public class TourLogController(
+    ITourLogRepository repository,
+    ITourRepository tourRepository,
+    ILogger<TourLogController> logger)
+    : AController<TourLog, CreateTourLogDto, ReadTourLogDto, UpdateTourLogDto>(repository, logger) {
 
-	[Authorize]
-	[HttpPost]
-	public override async Task<ActionResult<ReadTourLogDto>> CreateAsync(CreateTourLogDto entity, CancellationToken ct) {
-		if (!await tourRepository.ExistsAsync(entity.TourId, ct))
-			return NotFound($"Tour {entity.TourId} does not exist.");
+    protected override bool IsOwner(TourLog entity) =>
+        TryGetCurrentUserId(out var userId) && entity.UserId == userId;
 
-		if (!TryGetCurrentUserId(out var userId))
-			return Unauthorized("Invalid User");
+    [Authorize]
+    [HttpPost]
+    public override async Task<ActionResult<ReadTourLogDto>>
+        CreateAsync(CreateTourLogDto entity, CancellationToken ct) {
+        if (!await tourRepository.ExistsAsync(entity.TourId, ct)) {
+            logger.LogWarning("TourLog create failed — Tour {TourId} does not exist.", entity.TourId);
+            return NotFound($"Tour {entity.TourId} does not exist.");
+        }
 
-		TourLog toCreate = entity.Adapt<TourLog>();
-		toCreate.UserId = userId;
+        if (!TryGetCurrentUserId(out var userId))
+            return Unauthorized("Invalid User");
 
-		var created = await repository.CreateAsync(toCreate, ct);
-		await UpdatePopularityAsync(entity.TourId, ct);
+        TourLog toCreate = entity.Adapt<TourLog>();
+        toCreate.UserId = userId;
 
-		return Ok(created.Adapt<ReadTourLogDto>());
-	}
+        var created = await repository.CreateAsync(toCreate, ct);
+        await UpdatePopularityAsync(entity.TourId, ct);
+        logger.LogInformation("Created TourLog {LogId} for Tour {TourId} by user {UserId}", created.Id, entity.TourId,
+            userId);
 
-	[Authorize]
-	[HttpDelete("{id}")]
-	public override async Task<ActionResult> DeleteAsync(Guid id, CancellationToken ct) {
-		TourLog? log = await repository.ReadAsync(id, ct);
+        return Ok(created.Adapt<ReadTourLogDto>());
+    }
 
-		if (log is null)
-			return NotFound();
+    [Authorize]
+    [HttpDelete("{id}")]
+    public override async Task<ActionResult> DeleteAsync(Guid id, CancellationToken ct) {
+        TourLog? log = await repository.ReadAsync(id, ct);
 
-		var tourId = log.TourId;
+        if (log is null) {
+            logger.LogWarning("TourLog not found for delete: {LogId}", id);
+            return NotFound();
+        }
 
-		await repository.DeleteAsync(log, ct);
-		await UpdatePopularityAsync(tourId, ct);
+        var tourId = log.TourId;
 
-		return NoContent();
-	}
+        await repository.DeleteAsync(log, ct);
+        await UpdatePopularityAsync(tourId, ct);
+        logger.LogInformation("Deleted TourLog {LogId} from Tour {TourId}", id, tourId);
 
-	[Authorize]
-	[HttpGet("search")]
-	public async Task<ActionResult<List<ReadTourLogDto>>> SearchAsync([FromQuery] string q, CancellationToken ct) {
-		if (string.IsNullOrWhiteSpace(q))
-			return BadRequest("Query must not be empty.");
+        return NoContent();
+    }
 
-		List<TourLog> results = await repository.SearchAsync(q, ct);
+    [Authorize]
+    [HttpGet("search")]
+    public async Task<ActionResult<List<ReadTourLogDto>>> SearchAsync([FromQuery] string q, CancellationToken ct) {
+        if (string.IsNullOrWhiteSpace(q))
+            return BadRequest("Query must not be empty.");
 
-		return Ok(results.Adapt<List<ReadTourLogDto>>());
-	}
+        List<TourLog> results = await repository.SearchAsync(q, ct);
+        logger.LogInformation("TourLog search '{Query}' returned {Count} results", q, results.Count);
 
-	private async Task UpdatePopularityAsync(Guid tourId, CancellationToken ct) {
-		Tour? tour = await tourRepository.ReadAsync(tourId, ct);
-		if (tour is null) return;
+        return Ok(results.Adapt<List<ReadTourLogDto>>());
+    }
 
-		tour.Popularity = (await repository.ReadAsync(t => t.TourId == tourId, ct)).Count;
-		await tourRepository.UpdateAsync(tour, ct);
-	}
+    private async Task UpdatePopularityAsync(Guid tourId, CancellationToken ct) {
+        Tour? tour = await tourRepository.ReadAsync(tourId, ct);
+        if (tour is null) return;
+
+        tour.Popularity = (await repository.ReadAsync(t => t.TourId == tourId, ct)).Count;
+        await tourRepository.UpdateAsync(tour, ct);
+    }
 }
