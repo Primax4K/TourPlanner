@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Domain.Repositories.Interfaces;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
@@ -20,11 +19,10 @@ public class TourLogController(ITourLogRepository repository, ITourRepository to
 		if (!await tourRepository.ExistsAsync(entity.TourId, ct))
 			return NotFound($"Tour {entity.TourId} does not exist.");
 
-		TourLog toCreate = entity.Adapt<TourLog>();
-
-		if (!Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+		if (!TryGetCurrentUserId(out var userId))
 			return Unauthorized("Invalid User");
 
+		TourLog toCreate = entity.Adapt<TourLog>();
 		toCreate.UserId = userId;
 
 		var created = await repository.CreateAsync(toCreate, ct);

@@ -90,24 +90,17 @@ public class AuthController : ControllerBase {
 
 	[Authorize]
 	[HttpGet("me")]
-	public async Task<ActionResult<ApplicationUser>> Me(CancellationToken ct) {
+	public async Task<ActionResult<MeResponse>> Me(CancellationToken ct) {
 		var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-		if (!Guid.TryParse(userIdClaim, out var userId)) {
+		if (!Guid.TryParse(userIdClaim, out var userId))
 			return Unauthorized();
-		}
 
 		var user = await _userRepository.FirstOrDefaultAsync(x => x.Id == userId, ct);
 
-		if (user is null) {
+		if (user is null)
 			return NotFound();
-		}
 
-		return Ok(new {
-			user.Id,
-			user.Username,
-			user.Email,
-			user.CreatedAtUtc
-		});
+		return Ok(new MeResponse(user.Id, user.Username, user.Email, user.CreatedAtUtc));
 	}
 }
