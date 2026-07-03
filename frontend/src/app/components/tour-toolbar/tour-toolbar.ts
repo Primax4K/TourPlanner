@@ -14,6 +14,9 @@ export class TourToolbar {
     create_tour(){
       this.overlay.open('create')
     }
+    random_tour(){
+      this.tourService.createRandomTour()
+    }
     edit_tour(){
       this.overlay.open('edit')
     }

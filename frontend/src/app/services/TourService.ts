@@ -114,6 +114,46 @@ export class TourService {
 
     this.tours.update(tours=>[...tours,fetchedTour]);
   }
+
+  async createRandomTour(){
+    const cities = [
+      { name: 'Wien',        long: 16.3738, lat: 48.2082 },
+      { name: 'Graz',        long: 15.4395, lat: 47.0707 },
+      { name: 'Linz',        long: 14.2858, lat: 48.3069 },
+      { name: 'Salzburg',    long: 13.0550, lat: 47.8095 },
+      { name: 'Innsbruck',   long: 11.4041, lat: 47.2692 },
+      { name: 'Klagenfurt',  long: 14.3122, lat: 46.6247 },
+      { name: 'Villach',     long: 13.8558, lat: 46.6111 },
+      { name: 'Wels',        long: 14.0231, lat: 48.1575 },
+      { name: 'Sankt Pölten',long: 15.6250, lat: 48.2047 },
+      { name: 'Dornbirn',    long:  9.7439, lat: 47.4125 },
+      { name: 'Bregenz',     long:  9.7471, lat: 47.5031 },
+      { name: 'Steyr',       long: 14.4213, lat: 48.0407 },
+      { name: 'Feldkirch',   long:  9.6000, lat: 47.2333 },
+      { name: 'Eisenstadt',  long: 16.5188, lat: 47.8457 },
+    ];
+
+    const fromIdx = Math.floor(Math.random() * cities.length);
+    let toIdx = Math.floor(Math.random() * cities.length);
+    while (toIdx === fromIdx) {
+      toIdx = Math.floor(Math.random() * cities.length);
+    }
+
+    const from = cities[fromIdx];
+    const to = cities[toIdx];
+
+    await this.createTour(new Tour(
+      "",
+      `${from.name} → ${to.name}`,
+      from.long, from.lat,
+      to.long, to.lat,
+      null,
+      [],
+      `Random car tour from ${from.name} to ${to.name}`,
+      TransportType.Car
+    ));
+  }
+
   async exportTour(tour:Tour){
     const data = createTourDto(tour);
 
