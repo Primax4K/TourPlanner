@@ -1,0 +1,24 @@
+<div (click)="toggleSelection()" class="flex gap-4 cursor-pointer py-2 mt-2.5 px-4 hover:bg-indigo-300 text-lg rounded-2xl"
+    [class.bg-indigo-50]="true">
+    @if(isSelected()){
+        <span class="px-2 hover:text-indigo-50 rotate-180">⛛</span>
+    }@else{
+        <span class="px-2 hover:text-indigo-50">⛛</span>
+
+    }
+    <span>({{tourLog().formatedTimeDate()}})</span>
+    
+</div>
+@if(isSelected()){
+<div class="border-x border-b rounded-b-2xl p-5" >
+    <div class="flex gap-6">
+        <span class="flex-1/2">Difficulty: {{tourLog().difficulty}}/5</span>
+        <span class="flex-1/2">Rating: {{tourLog().rating}}/5</span>
+    </div>
+    <div class="flex gap-6">        
+        <span class="flex-1/2">Time: {{tourLog().totalTimeInM}}mins</span>
+        <span class="flex-1/2">Distance: {{tourLog().totalDistanceInM}}m</span>
+    </div>
+    <div class="border-t">Comment: {{tourLog().comment}}</div>
+</div>
+}

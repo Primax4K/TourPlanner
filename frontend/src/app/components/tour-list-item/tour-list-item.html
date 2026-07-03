@@ -1,0 +1,34 @@
+<div class="cursor-pointer py-2 mb-2.5 px-4 hover:bg-indigo-300 text-lg flex rounded-2xl"
+    [class.bg-indigo-300]="isSelected()"
+    [class.bg-indigo-50]="!isSelected()">
+    @if(isSelected()){
+        <span (click)="toggleSelection()" class="px-2 hover:text-indigo-50 rotate-180">⛛</span>
+    }@else{
+        <span (click)="toggleSelection()" class="px-2 hover:text-indigo-50">⛛</span>
+    }
+    <span (click)="toggleSelection()" class="grow">{{tour().name}}</span>
+    <span (click)="toggleSelection()" class="text-gray-500 px-2">~{{tour().routeInfo?.distance}} km</span>
+    <span (click)="toggleSelection()" class="text-gray-500 px-2">~{{tour().routeInfo?.duration}} mins</span>
+    
+    <button class="border rounded-md px-1 hover:bg-indigo-50" (click)="activateTourLogView()">{{tour().tourLogs.length}} logs</button>
+</div>
+@if(isSelected()){
+<div class="border-b border-x px-2 rounded-b-md mb-3">
+    <span>
+        {{tour().description}}
+    </span>
+    <br>
+    <span>
+        Child-friendliness: 
+        @if(tour().getChildFriendliness()===0){
+            ?
+        }@else{
+            {{tour().getChildFriendliness()}}/5
+        }
+    </span>
+    <br>
+    <button class="border-2 rounded-md px-3 py-1 cursor-pointer mb-2" (click)="tourService.exportTour(tour())">
+        Export
+    </button>
+</div>
+}

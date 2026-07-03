@@ -1,0 +1,9 @@
+<form class="flex flex-col text-center mb-4" (submit)="submit(); $event.preventDefault()">
+    <label class="mt-3">Username: </label>
+    <input (input)="username.set($event.target.value)" class="border p-1" type="text">
+    <label class="mt-3">Email: </label>
+    <input (input)="email.set($event.target.value)" class="border p-1" type="email">
+    <label class="mt-3">Password: </label>
+    <input (input)="password.set($event.target.value)" class="border p-1" type="password">
+    <button class="mt-4 border p-2">Submit</button>
+</form>

@@ -1,0 +1,32 @@
+using Domain.Exceptions;
+using Microsoft.AspNetCore.Diagnostics;
+
+namespace View.Exceptions;
+
+public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IExceptionHandler {
+    public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken ct) {
+        var (statusCode, title) = exception switch {
+            OperationCanceledException => (StatusCodes.Status408RequestTimeout, "Request Timeout"),
+            RouteServiceException => (StatusCodes.Status502BadGateway, "Routing Service Unavailable"),
+            RepositoryException => (StatusCodes.Status500InternalServerError, "Database Error"),
+            _ => (StatusCodes.Status500InternalServerError, "Internal Server Error")
+        };
+
+        if (exception is OperationCanceledException)
+            logger.LogInformation("Request cancelled by client.");
+        else
+            logger.LogError(exception, "Unhandled exception ({Type}): {Message}", exception.GetType().Name,
+                exception.Message);
+
+        var problem = new ProblemDetails {
+            Status = statusCode,
+            Title = title,
+            Detail = exception.Message
+        };
+
+        context.Response.StatusCode = statusCode;
+        await context.Response.WriteAsJsonAsync(problem, ct);
+
+        return true;
+    }
+}

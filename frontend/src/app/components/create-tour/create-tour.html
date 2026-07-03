@@ -1,0 +1,48 @@
+<form class="flex flex-col text-center mb-4" (submit)="submit(); $event.preventDefault()">
+
+    <label class="mt-2">Tour Name:</label>
+    <input class="border p-1"
+           type="text"
+           (input)="tourName.set($event.target.value)">
+
+    <label class="mt-2">transport type:</label>
+    <div>
+        <label class="ml-2 mr-1">Car</label>
+        <input type="radio" checked name="transport" (change)="transport.set('car')">
+
+        <label class="ml-2 mr-1">Bicycle</label>
+        <input type="radio" name="transport" (change)="transport.set('bicycle')">
+
+        <label class="ml-2 mr-1">Walking</label>
+        <input type="radio" name="transport" (change)="transport.set('walking')">
+
+    </div>
+
+    <label class="mt-2">Description:</label>
+    <input class="border p-1"
+           type="text"
+           (input)="description.set($event.target.value)">
+
+    <label class="mt-2">Starting Point Longitude:</label>
+    <input class="border p-1"
+           type="number" step="0.0001"
+           (input)="start_long.set(parseFloatValue($event.target.value))">           
+
+    <label class="mt-2">Starting Point Latitude:</label>
+    <input class="border p-1"
+           type="number" step="0.0001" 
+           (input)="start_lat.set(parseFloatValue($event.target.value))">
+
+
+    <label class="mt-2">Finishing Point Longitude:</label>
+    <input class="border p-1"
+           type="number" step="0.0001"
+           (input)="end_long.set(parseFloatValue($event.target.value))">
+    <label class="mt-2">Finishing Point Latitude:</label>
+    <input class="border p-1"
+           type="number" step="0.0001"
+           (input)="end_lat.set(parseFloatValue($event.target.value))">
+
+
+    <button class="mt-4 border p-2">Submit</button>
+</form>

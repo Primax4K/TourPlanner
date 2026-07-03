@@ -1,0 +1,41 @@
+<div class="flex flex-col text-center mb-4"><label class="mt-2">Tour Name: </label>
+    <label class="mt-2">difficulty: </label>
+    <div>
+        <label class="ml-2 mr-1" for="d1">1</label>
+        <input name="difficulty" id="d1" (change)="difficulty.set(1)" required type="radio">
+        <label class="ml-2 mr-1" for="d2">2</label>
+        <input name="difficulty" id="d2" (change)="difficulty.set(2)" type="radio">
+        <label class="ml-2 mr-1" for="d3">3</label>
+        <input name="difficulty" id="d3" (change)="difficulty.set(3)" type="radio">
+        <label class="ml-2 mr-1" for="d4">4</label>
+        <input name="difficulty" id="d4" (change)="difficulty.set(4)" type="radio">
+        <label class="ml-2 mr-1" for="d5">5</label>
+        <input name="difficulty" id="d5" (change)="difficulty.set(5)" type="radio">
+    </div>
+    <label class="mt-2">rating: </label>
+    <div>
+        <label class="ml-2 mr-1" for="r1">1</label>
+        <input name="rating" id="r1" (change)="rating.set(1)" required type="radio">
+        <label class="ml-2 mr-1" for="r2">2</label>
+        <input name="rating" id="r2" (change)="rating.set(2)" type="radio">
+        <label class="ml-2 mr-1" for="r3">3</label>
+        <input name="rating" id="r3" (change)="rating.set(3)" type="radio">
+        <label class="ml-2 mr-1" for="r4">4</label>
+        <input name="rating" id="r4" (change)="rating.set(4)" type="radio">
+        <label class="ml-2 mr-1" for="r5">5</label>
+        <input name="rating" id="r5" (change)="rating.set(5)" type="radio">
+    </div>
+    <label>Time of the tour</label>
+    <input required type="time" (change)="timeString.set($event.target.value)">
+    <label>Date of the tour</label>
+    <input required type="date" (change)="dateString.set($event.target.value)">
+    <label class="mt-2">Comment: </label>
+    <input class="border p-1" (input)="comment.set($event.target.value)" type="text">
+    
+    <label class="mt-2">Distance in m: </label>
+    <input required class="border p-1" (input)="distance.set(parseFloatValue($event.target.value))" 
+    type="number">
+    <label class="mt-2">Time in m: </label>
+    <input required class="border p-1" type="number" (input)="time.set(parseFloatValue($event.target.value))">
+    <button class="mt-4 border p-2" (click)="submit()">Create</button>
+</div>
