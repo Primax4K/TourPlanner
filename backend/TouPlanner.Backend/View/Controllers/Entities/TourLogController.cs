@@ -68,9 +68,10 @@ public class TourLogController(
             return BadRequest("Query must not be empty.");
 
         List<TourLog> results = await repository.SearchAsync(q, ct);
-        logger.LogInformation("TourLog search '{Query}' returned {Count} results", q, results.Count);
+        var owned = results.Where(IsOwner).ToList();
+        logger.LogInformation("TourLog search '{Query}' returned {Count} results", q, owned.Count);
 
-        return Ok(results.Adapt<List<ReadTourLogDto>>());
+        return Ok(owned.Adapt<List<ReadTourLogDto>>());
     }
 
     private async Task UpdatePopularityAsync(Guid tourId, CancellationToken ct) {

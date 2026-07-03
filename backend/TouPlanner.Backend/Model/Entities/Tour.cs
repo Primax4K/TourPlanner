@@ -20,7 +20,8 @@ public class Tour {
 
 	public int Duration { get; set; }
 
-	[MaxLength(4000)] public string? Coordinates { get; set; }
+	// Encoded route polyline — length is unbounded, so map to unlimited text (not varchar).
+	public string? Coordinates { get; set; }
 
 	// Computed
 	public int Popularity { get; set; } 

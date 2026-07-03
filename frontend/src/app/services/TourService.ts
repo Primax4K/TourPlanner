@@ -49,6 +49,8 @@ export class TourService {
       }
     });
 
+    if(!response.ok) return;
+
     const data = await response.json();
     const fetchedTours: Tour[] = data.map(receiveTourDto);
     this.tours.set(fetchedTours)
@@ -64,6 +66,8 @@ export class TourService {
         "Authorization": `Bearer ${token}`
       }
     });
+
+    if(!response.ok) return;
 
     const data = await response.json();
     const fetchedTours: Tour[] = data.map(receiveTourDto);
@@ -81,9 +85,12 @@ export class TourService {
       },
       body: JSON.stringify(createTourDto(newTour))
     });
+
+    if(!response.ok) return;
+
     const data = await response.json();
     const fetchedTour: Tour = receiveTourDto(data);
-    
+
     this.tours.update(tours=>[...tours,fetchedTour]);
   }
 
@@ -99,9 +106,12 @@ export class TourService {
       },
       body: json
     });
+
+    if(!response.ok) return;
+
     const data = await response.json();
     const fetchedTour: Tour = receiveTourDto(data);
-    
+
     this.tours.update(tours=>[...tours,fetchedTour]);
   }
   async exportTour(tour:Tour){
@@ -196,7 +206,8 @@ export class TourService {
           tour.to_lat,
           tour.routeInfo,
           [...tour.tourLogs, receiveTourLogDto(data)],
-          tour.description
+          tour.description,
+          tour.transport
         );
       }));
       this.selectTour(tourId);
@@ -213,12 +224,14 @@ export class TourService {
       }
     });
 
+    if(!response.ok) return;
+
     const data = await response.json();
     this.tours.update(tours=>
       tours.map(t =>
-        t.id !== tourId ? t : 
-        new Tour(t.id, t.name, t.from_long, t.from_lat, t.to_long, t.to_lat, t.routeInfo, 
-          data.map(receiveTourLogDto))
+        t.id !== tourId ? t :
+        new Tour(t.id, t.name, t.from_long, t.from_lat, t.to_long, t.to_lat, t.routeInfo,
+          data.map(receiveTourLogDto), t.description, t.transport)
     ));
     this.selectTour(tourId);
   }
@@ -243,9 +256,9 @@ export class TourService {
     this.tours.update(tours=>
       tours.map(t =>
         t.id !== tourId ? t : 
-        new Tour(t.id, t.name, t.from_long, t.from_lat, t.to_long, t.to_lat, t.routeInfo, 
+        new Tour(t.id, t.name, t.from_long, t.from_lat, t.to_long, t.to_lat, t.routeInfo,
           t.tourLogs.map(tl=>
-            tl.id === data.id ? editedTourLog : tl), t.description)
+            tl.id === data.id ? editedTourLog : tl), t.description, t.transport)
       )
     );
 
@@ -269,7 +282,7 @@ export class TourService {
     this.tours.update(tours=>
       tours.map(t =>
         t.id !== tourId ? t : 
-        new Tour(t.id, t.name, t.from_long, t.from_lat, t.to_long, t.to_lat, t.routeInfo, t.tourLogs.filter(tl=>tl.id!==tourLogId), t.description)
+        new Tour(t.id, t.name, t.from_long, t.from_lat, t.to_long, t.to_lat, t.routeInfo, t.tourLogs.filter(tl=>tl.id!==tourLogId), t.description, t.transport)
       )
     );
     this.selectTour(tourId);

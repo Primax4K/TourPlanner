@@ -85,7 +85,7 @@ export function receiveTourDto(tour: any) {
     {
       distance: tour.distance,
       duration: tour.duration,
-      coordinates: polyline.decode(tour.coordinates) as [number, number][]
+      coordinates: (tour.coordinates ? polyline.decode(tour.coordinates) : []) as [number, number][]
     },
     tour.tourLogs?.map(receiveTourLogDto),
     tour.description,

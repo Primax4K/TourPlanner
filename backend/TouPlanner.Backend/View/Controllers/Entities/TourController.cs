@@ -58,7 +58,11 @@ public class TourController(ITourRepository repository, IRouteService routeServi
             return NotFound();
         }
 
+        // ChildFriendliness is a server-side field the client does not manage;
+        // preserve the stored value so Adapt doesn't reset it to the DTO default.
+        var childFriendliness = data.ChildFriendliness;
         record.Adapt(data);
+        data.ChildFriendliness = childFriendliness;
 
         logger.LogDebug(
             "Fetching route for Tour {TourId} update (transport {Transport}, from [{FromLng},{FromLat}] to [{ToLng},{ToLat}])",

@@ -112,4 +112,4 @@ app.MapControllers();
 
 await DataSeeder.SeedAsync(app.Services);
 
-app.Run();
+app.Run("https://0.0.0.0:8080");
