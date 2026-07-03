@@ -22,12 +22,6 @@ public class AuthController : ControllerBase {
 
 	[HttpPost("register")]
 	public async Task<ActionResult<AuthResponse>> Register(RegisterRequest request, CancellationToken ct) {
-		if (string.IsNullOrWhiteSpace(request.Username) ||
-		    string.IsNullOrWhiteSpace(request.Email) ||
-		    string.IsNullOrWhiteSpace(request.Password)) {
-			return BadRequest("Username, email, and password are required.");
-		}
-
 		var usernameExists = await _userRepository.ExistsAsync(x => x.Username == request.Username, ct);
 
 		if (usernameExists) {
@@ -60,11 +54,6 @@ public class AuthController : ControllerBase {
 
 	[HttpPost("login")]
 	public async Task<ActionResult<AuthResponse>> Login(LoginRequest request, CancellationToken ct) {
-		if (string.IsNullOrWhiteSpace(request.UsernameOrEmail) ||
-		    string.IsNullOrWhiteSpace(request.Password)) {
-			return BadRequest("Username/email and password are required.");
-		}
-
 		var user = await _userRepository.FirstOrDefaultAsync(x =>
 			x.Username == request.UsernameOrEmail || x.Email == request.UsernameOrEmail, ct);
 

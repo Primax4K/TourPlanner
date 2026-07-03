@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using Model;
+using View.Exceptions;
 
 namespace View.Services;
 
@@ -35,19 +36,24 @@ public class RouteService(HttpClient httpClient, IConfiguration config) : IRoute
 		};
 		request.Headers.TryAddWithoutValidation("Authorization", apiKey);
 
-		var response = await httpClient.SendAsync(request, ct);
-		response.EnsureSuccessStatusCode();
+		try {
+			var response = await httpClient.SendAsync(request, ct);
+			response.EnsureSuccessStatusCode();
 
-		using var doc = await JsonDocument.ParseAsync(
-			await response.Content.ReadAsStreamAsync(ct), cancellationToken: ct);
+			using var doc = await JsonDocument.ParseAsync(
+				await response.Content.ReadAsStreamAsync(ct), cancellationToken: ct);
 
-		var route   = doc.RootElement.GetProperty("routes")[0];
-		var summary = route.GetProperty("summary");
+			var route   = doc.RootElement.GetProperty("routes")[0];
+			var summary = route.GetProperty("summary");
 
-		return new RouteData(
-			DistanceKm:       Math.Round(summary.GetProperty("distance").GetDouble() / 1000.0, 2),
-			DurationMinutes:  (int)Math.Round(summary.GetProperty("duration").GetDouble() / 60.0),
-			EncodedGeometry:  route.GetProperty("geometry").GetString()!
-		);
+			return new RouteData(
+				DistanceKm:       Math.Round(summary.GetProperty("distance").GetDouble() / 1000.0, 2),
+				DurationMinutes:  (int)Math.Round(summary.GetProperty("duration").GetDouble() / 60.0),
+				EncodedGeometry:  route.GetProperty("geometry").GetString()!
+			);
+		}
+		catch (HttpRequestException ex) {
+			throw new RouteServiceException("Failed to retrieve route from OpenRouteService.", ex);
+		}
 	}
 }

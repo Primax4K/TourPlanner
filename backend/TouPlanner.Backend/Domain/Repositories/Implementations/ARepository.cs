@@ -1,4 +1,6 @@
-﻿namespace Domain.Repositories.Implementations;
+﻿using Domain.Exceptions;
+
+namespace Domain.Repositories.Implementations;
 
 public abstract class ARepository<TEntity>(TourPlannerDbContext context) : IRepository<TEntity>
 	where TEntity : class {
@@ -43,44 +45,79 @@ public abstract class ARepository<TEntity>(TourPlannerDbContext context) : IRepo
 	}
 
 	public virtual async Task<TEntity> CreateAsync(TEntity entity, CancellationToken ct) {
-		Table.Add(entity);
-		await Context.SaveChangesAsync(ct);
-		return entity;
+		try {
+			Table.Add(entity);
+			await Context.SaveChangesAsync(ct);
+			return entity;
+		}
+		catch (DbUpdateException ex) {
+			throw new RepositoryException("Failed to create entity.", ex);
+		}
 	}
 
 	public virtual async Task<List<TEntity>> CreateAsync(List<TEntity> entity, CancellationToken ct) {
-		Table.AddRange(entity);
-		await Context.SaveChangesAsync(ct);
-		return entity;
+		try {
+			Table.AddRange(entity);
+			await Context.SaveChangesAsync(ct);
+			return entity;
+		}
+		catch (DbUpdateException ex) {
+			throw new RepositoryException("Failed to create entities.", ex);
+		}
 	}
 
 	public virtual async Task UpdateAsync(TEntity entity, CancellationToken ct) {
-		Context.ChangeTracker.Clear();
-		Table.Update(entity);
-		await Context.SaveChangesAsync(ct);
+		try {
+			Context.ChangeTracker.Clear();
+			Table.Update(entity);
+			await Context.SaveChangesAsync(ct);
+		}
+		catch (DbUpdateException ex) {
+			throw new RepositoryException("Failed to update entity.", ex);
+		}
 	}
 
 	public virtual async Task UpdateAsync(IEnumerable<TEntity> entity, CancellationToken ct) {
-		Context.ChangeTracker.Clear();
-		Table.UpdateRange(entity);
-		await Context.SaveChangesAsync(ct);
+		try {
+			Context.ChangeTracker.Clear();
+			Table.UpdateRange(entity);
+			await Context.SaveChangesAsync(ct);
+		}
+		catch (DbUpdateException ex) {
+			throw new RepositoryException("Failed to update entities.", ex);
+		}
 	}
 
 	public virtual async Task DeleteAsync(TEntity entity, CancellationToken ct) {
-		Context.ChangeTracker.Clear();
-		Table.Remove(entity);
-		await Context.SaveChangesAsync(ct);
+		try {
+			Context.ChangeTracker.Clear();
+			Table.Remove(entity);
+			await Context.SaveChangesAsync(ct);
+		}
+		catch (DbUpdateException ex) {
+			throw new RepositoryException("Failed to delete entity.", ex);
+		}
 	}
 
 	public virtual async Task DeleteAsync(IEnumerable<TEntity> entity, CancellationToken ct) {
-		Context.ChangeTracker.Clear();
-		Table.RemoveRange(entity);
-		await Context.SaveChangesAsync(ct);
+		try {
+			Context.ChangeTracker.Clear();
+			Table.RemoveRange(entity);
+			await Context.SaveChangesAsync(ct);
+		}
+		catch (DbUpdateException ex) {
+			throw new RepositoryException("Failed to delete entities.", ex);
+		}
 	}
 
 	public virtual async Task DeleteAsync(Expression<Func<TEntity, bool>> filter, CancellationToken ct) {
-		Context.ChangeTracker.Clear();
-		Table.RemoveRange(Table.Where(filter));
-		await Context.SaveChangesAsync(ct);
+		try {
+			Context.ChangeTracker.Clear();
+			Table.RemoveRange(Table.Where(filter));
+			await Context.SaveChangesAsync(ct);
+		}
+		catch (DbUpdateException ex) {
+			throw new RepositoryException("Failed to delete entities.", ex);
+		}
 	}
 }
