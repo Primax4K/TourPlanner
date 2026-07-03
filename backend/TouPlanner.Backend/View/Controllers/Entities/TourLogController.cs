@@ -47,6 +47,11 @@ public class TourLogController(
             return NotFound();
         }
 
+        if (!IsOwner(log)) {
+            logger.LogWarning("TourLog {LogId} delete denied — not owned by current user.", id);
+            return NotFound();
+        }
+
         var tourId = log.TourId;
 
         await repository.DeleteAsync(log, ct);
