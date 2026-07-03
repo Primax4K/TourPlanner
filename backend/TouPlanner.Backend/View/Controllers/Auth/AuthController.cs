@@ -1,8 +1,3 @@
-using System.Security.Claims;
-using Domain.Repositories.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Model.Entities;
 using View.Auth;
 using View.Requests;
 using View.Responses;

@@ -1,6 +1,4 @@
 using Model.Configuration;
-using Model.Entities;
-using Model;
 
 namespace View.Seeding;
 

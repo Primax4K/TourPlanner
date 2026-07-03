@@ -1,5 +1,3 @@
-using Model;
-
 namespace View.Services;
 
 public record RouteData(double DistanceKm, int DurationMinutes, string EncodedGeometry);

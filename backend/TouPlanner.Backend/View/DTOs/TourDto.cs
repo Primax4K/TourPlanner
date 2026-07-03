@@ -1,5 +1,3 @@
-using Model;
-
 namespace View.DTOs;
 
 public record CreateTourDto(

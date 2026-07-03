@@ -1,6 +1,4 @@
-﻿using Domain.Exceptions;
-
-namespace Domain.Repositories.Implementations;
+﻿namespace Domain.Repositories.Implementations;
 
 public abstract class ARepository<TEntity>(TourPlannerDbContext context) : IRepository<TEntity>
 	where TEntity : class {

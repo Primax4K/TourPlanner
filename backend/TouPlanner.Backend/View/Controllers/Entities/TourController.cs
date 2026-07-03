@@ -1,8 +1,3 @@
-using Domain.Repositories.Interfaces;
-using Mapster;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Model.Entities;
 using View.Controllers.Abstract;
 using View.DTOs;
 using View.Services;

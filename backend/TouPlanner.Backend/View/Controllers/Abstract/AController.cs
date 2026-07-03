@@ -1,9 +1,3 @@
-using System.Security.Claims;
-using Domain.Repositories.Interfaces;
-using Mapster;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-
 namespace View.Controllers.Abstract;
 
 public abstract class AController<TEntity, TCreateEntityDto, TReadEntityDto, TUpdateEntityDto>(
