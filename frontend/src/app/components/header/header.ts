@@ -23,6 +23,7 @@ export class Header {
   }
   logout(){
     this.loginService.clearToken();
+    this.tourService.selectTour("");
   }
   search(){
     if(this.searchQuery()==""){
@@ -35,6 +36,10 @@ export class Header {
   searchLog(){
     if(this.searchQuery()==""){
       this.tourService.fetchAllTours();
+      const selectedTour=this.tourService.selectedTour();
+      if(selectedTour!=null){
+        this.tourService.selectTour(selectedTour.id)
+      }
     }
     else{
       const selectedTour=this.tourService.selectedTour();

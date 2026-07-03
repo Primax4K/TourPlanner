@@ -3,4 +3,14 @@
 @for (tour of tourService.sortTourByPopularity(tourService.tours()); track tour.id){
     <app-tour-list-item [tour] = "tour"/>
 }
+@if(loginService.isLoggedIn()){
+    <div
+        class="dropzone border-2 rounded-md px-3 py-1 cursor-grab mb-2"
+        (dragover)="$event.preventDefault(); "
+        (drop)="onDrop($event) "
+        >
+        Drop your Json here to import
+    </div>
+}
+
 </section>

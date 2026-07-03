@@ -1,4 +1,4 @@
-<div class="flex flex-col text-center mb-4">
+<form class="flex flex-col text-center mb-4" (submit)="submit();$event.preventDefault()">
     <label class="mt-2">difficulty: </label>
     <div>
         <label class="ml-2 mr-1" for="1">1</label>
@@ -36,5 +36,5 @@
     type="number" value="{{tourLog().totalDistanceInM}}">
     <label class="mt-2">Time in m: </label>
     <input class="border p-1" type="number" (input)="time.set(parseFloatValue($event.target.value))" value="{{tourLog().totalTimeInM}}">
-    <button class="mt-4 border p-2" (click)="submit()">Ändern</button>
-</div>
+    <button class="mt-4 border p-2" >Ändern</button>
+</form>

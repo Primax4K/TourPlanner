@@ -26,5 +26,9 @@
             {{tour().getChildFriendliness()}}/5
         }
     </span>
+    <br>
+    <button class="border-2 rounded-md px-3 py-1 cursor-pointer mb-2" (click)="tourService.exportTour(tour())">
+        Export
+    </button>
 </div>
 }

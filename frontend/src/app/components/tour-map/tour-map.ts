@@ -60,6 +60,7 @@ export class TourMap implements AfterViewInit{
       duration: 1.5
     });
   }
+
   private drawRoute(routeInfo:RouteData|null){
     if (this.route) {
       this.map.removeLayer(this.route);
